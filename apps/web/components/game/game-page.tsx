@@ -15,6 +15,7 @@ import {
 } from "lucide-react"
 import Logo from "../logo"
 import GameLeaderboard from "./game-leaderboard"
+import { useSocket } from "../../lib/context/socket-context"
 
 export interface PlayerType {
   id: number,
@@ -25,6 +26,7 @@ export interface PlayerType {
   isDrawing?: boolean | false,
 }
 export default function GamePage() {
+  const { sendMessage } = useSocket()
   const [currentRound, setCurrentRound] = useState(3)
   const [totalRounds, setTotalRounds] = useState(3)
   const [timeLeft, setTimeLeft] = useState(50)
@@ -375,19 +377,17 @@ export default function GamePage() {
 
   const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault()
-
+    const newMessage = {
+      type: "message",
+      player: "poing (You)",
+      content: guessInput,
+      color: "#ff4040",
+    }
+    sendMessage(newMessage)
     if (!guessInput.trim()) return
 
     // Add message to chat
-    setMessages([
-      ...messages,
-      {
-        type: "message",
-        player: "poing (You)",
-        content: guessInput,
-        color: "#ff4040",
-      },
-    ])
+    setMessages([...messages, newMessage])
 
     // Clear input
     setGuessInput("")
