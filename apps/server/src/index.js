@@ -13,7 +13,10 @@ async function init() {
   httpServer.listen(PORT, () => {
     console.log(`HTTP server started at PORT: ${PORT}`)
   })
+
+  socketService.initListener()
 }
+
 init()
 
 // const express = require('express');
