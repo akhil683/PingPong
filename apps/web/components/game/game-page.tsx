@@ -1,44 +1,24 @@
 "use client";
 
 import type React from "react";
-
 import { useState, useRef, useEffect } from "react";
-import {
-  Settings,
-  ThumbsUp,
-  ThumbsDown,
-  Send,
-  Square,
-  Circle,
-  Triangle,
-  RectangleVertical,
-  Pencil,
-  Eraser,
-  Trash2,
-} from "lucide-react";
+import { Settings, ThumbsUp, ThumbsDown, Trash2 } from "lucide-react";
+
 import Logo from "../logo";
 import GameLeaderboard from "./game-leaderboard";
 import GameChat from "./game-chat";
 
-// Define types for better type safety
-type Tool = "pen" | "eraser" | "rectangle" | "square" | "circle" | "triangle";
-type MessageType = "system" | "message";
-
-export interface Message {
-  type: MessageType;
-  content: string;
-  player?: string;
-  color?: string;
-}
-
-export interface Player {
-  id: number;
-  name: string;
-  points: number;
-  color: string;
-  avatar: string;
-  isDrawing?: boolean;
-}
+import {
+  tools,
+  Tool,
+  initialMessages,
+  Message,
+  players,
+  colors,
+} from "../../constants/GameTools";
+import ToolSelection from "../tools/tool-selection";
+import ColorSelection from "../tools/color-selection";
+import BrushSelection from "../tools/brush-selection";
 
 export default function GamePage() {
   // Game state
@@ -53,125 +33,11 @@ export default function GamePage() {
   const [currentColor, setCurrentColor] = useState("#000000");
   const [brushSize, setBrushSize] = useState(5);
 
-  // Messages and chat
-  const [messages, setMessages] = useState<Message[]>([
-    { type: "system", content: "Game started! Round 1 of 3" },
-    { type: "system", content: "Aryaaa is drawing now!" },
-    {
-      type: "message",
-      player: "Ishish",
-      content: "is it a car?",
-      color: "#ffff00",
-    },
-    {
-      type: "message",
-      player: "Nrivy",
-      content: "looks like a house",
-      color: "#ffff00",
-    },
-    { type: "system", content: "hi is close to the answer!" },
-    { type: "message", player: "hi", content: "building?", color: "#66ffff" },
-    {
-      type: "message",
-      player: "Rmmmmmmmmmm",
-      content: "maybe a castle?",
-      color: "#66ffff",
-    },
-    {
-      type: "message",
-      player: "inschool",
-      content: "tower!",
-      color: "#333333",
-    },
-    { type: "system", content: "inschool guessed the word!" },
-    {
-      type: "message",
-      player: "X-Ray",
-      content: "nice one!",
-      color: "#ff8800",
-    },
-    {
-      type: "message",
-      player: "poing (You)",
-      content: "good job",
-      color: "#ff4040",
-    },
-    { type: "system", content: "Round 2 of 3" },
-    { type: "system", content: "inschool is drawing now!" },
-    {
-      type: "message",
-      player: "Ishish",
-      content: "is that a dog?",
-      color: "#ffff00",
-    },
-    { type: "message", player: "hi", content: "cat maybe?", color: "#66ffff" },
-    { type: "system", content: "Ishish guessed the word!" },
-    { type: "system", content: "Round 3 of 3" },
-    { type: "system", content: "Aryaaa is drawing now!" },
-  ]);
-
-  // Refs
+  const [messages, setMessages] = useState<Message[]>(initialMessages);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const chatContainerRef = useRef<HTMLDivElement>(null);
 
-  // Players
-  const players: Player[] = [
-    { id: 4, name: "Ishish", points: 2870, color: "#ffff00", avatar: "yellow" },
-    { id: 7, name: "Nrivy", points: 225, color: "#ffff00", avatar: "yellow" },
-    { id: 3, name: "hi", points: 2980, color: "#66ffff", avatar: "cyan" },
-    {
-      id: 15,
-      name: "Rmmmmmmmmmm",
-      points: 3680,
-      color: "#66ffff",
-      avatar: "cyan",
-    },
-    { id: 2, name: "inschool", points: 3390, color: "#333333", avatar: "gray" },
-    {
-      id: 5,
-      name: "Aryaaa",
-      points: 1360,
-      color: "#cc44cc",
-      avatar: "purple",
-      isDrawing: true,
-    },
-    { id: 6, name: "X-Ray", points: 455, color: "#ff8800", avatar: "orange" },
-    { id: 8, name: "poing (You)", points: 0, color: "#ff4040", avatar: "red" },
-  ];
-
-  // Available colors and tools
-  const colors = [
-    "#000000",
-    "#444444",
-    "#888888",
-    "#cccccc",
-    "#ffffff",
-    "#ff4040",
-    "#ff8800",
-    "#ffff00",
-    "#44cc44",
-    "#66ffff",
-    "#4444ff",
-    "#cc44cc",
-    "#ff88cc",
-    "#884400",
-    "#44aaaa",
-  ];
-
   const brushSizes = [2, 5, 10, 15, 25, 35];
-
-  const tools = [
-    { id: "pen" as Tool, icon: <Pencil size={20} />, label: "Pen" },
-    { id: "eraser" as Tool, icon: <Eraser size={20} />, label: "Eraser" },
-    {
-      id: "rectangle" as Tool,
-      icon: <RectangleVertical size={20} />,
-      label: "Rectangle",
-    },
-    { id: "square" as Tool, icon: <Square size={20} />, label: "Square" },
-    { id: "circle" as Tool, icon: <Circle size={20} />, label: "Circle" },
-    { id: "triangle" as Tool, icon: <Triangle size={20} />, label: "Triangle" },
-  ];
 
   // Timer effect
   useEffect(() => {
@@ -564,63 +430,29 @@ export default function GamePage() {
               {/* Drawing Tools */}
               <div className="absolute bottom-0 left-0 right-0 bg-gray-100/90 backdrop-blur-sm p-2 flex flex-wrap items-center gap-2 border-t border-gray-200">
                 {/* Tool Selection */}
-                <div className="flex gap-1 mr-3">
-                  {tools.map((tool) => (
-                    <button
-                      key={tool.id}
-                      className={`w-8 h-8 rounded-sm flex items-center justify-center ${currentTool === tool.id ? "bg-blue-100 ring-2 ring-blue-500" : "bg-white"} hover:bg-blue-50 transition-colors`}
-                      style={{ border: "1px solid #ccc" }}
-                      onClick={() => setCurrentTool(tool.id)}
-                      title={tool.label}
-                    >
-                      {tool.icon}
-                    </button>
-                  ))}
-                </div>
+                <ToolSelection
+                  tools={tools}
+                  currentTool={currentTool}
+                  setCurrentTool={setCurrentTool}
+                />
 
                 {/* Color Selection */}
-                <div className="flex flex-wrap gap-1 mr-2">
-                  {colors.map((color) => (
-                    <button
-                      key={color}
-                      className={`w-8 h-8 rounded-sm flex items-center justify-center ${currentColor === color ? "ring-2 ring-blue-500 transform scale-110 transition-transform" : "hover:scale-105 transition-transform"}`}
-                      style={{
-                        backgroundColor: color,
-                        border: "1px solid #ccc",
-                        opacity: currentTool === "eraser" ? 0.5 : 1,
-                      }}
-                      onClick={() => {
-                        setCurrentColor(color);
-                        if (currentTool === "eraser") {
-                          setCurrentTool("pen");
-                        }
-                      }}
-                      disabled={currentTool === "eraser"}
-                    />
-                  ))}
-                </div>
+                <ColorSelection
+                  colors={colors}
+                  currentColor={currentColor}
+                  currentTool={currentTool}
+                  setCurrentTool={setCurrentTool}
+                  setCurrentColor={setCurrentColor}
+                />
 
                 {/* Brush Size Selection */}
-                <div className="flex gap-1 mr-2">
-                  {brushSizes.map((size) => (
-                    <button
-                      key={size}
-                      className={`w-8 h-8 rounded-sm flex items-center justify-center bg-white ${brushSize === size ? "ring-2 ring-blue-500 transform scale-110 transition-transform" : "hover:scale-105 transition-transform"}`}
-                      style={{ border: "1px solid #ccc" }}
-                      onClick={() => setBrushSize(size)}
-                    >
-                      <div
-                        className="rounded-full"
-                        style={{
-                          width: size,
-                          height: size,
-                          backgroundColor:
-                            currentTool === "eraser" ? "#888888" : currentColor,
-                        }}
-                      />
-                    </button>
-                  ))}
-                </div>
+                <BrushSelection
+                  brushSizes={brushSizes}
+                  brushSize={brushSize}
+                  setBrushSize={setBrushSize}
+                  currentColor={currentColor}
+                  currentTool={currentTool}
+                />
 
                 {/* Clear Button */}
                 <button
@@ -643,12 +475,12 @@ export default function GamePage() {
             />
           </div>
         </div>
-
-        {/* Settings Button */}
-        <button className="absolute top-4 right-4 bg-gray-800 text-white p-2 rounded-full hover:bg-gray-700 transition-colors z-20">
-          <Settings className="w-6 h-6" />
-        </button>
       </div>
+
+      {/* Settings Button */}
+      <button className="absolute top-2 right-2 cursor-pointer bg-gray-800 text-white p-2 rounded-full hover:bg-gray-700 transition-colors z-20">
+        <Settings className="w-6 h-6" />
+      </button>
     </div>
   );
 }
@@ -658,19 +490,4 @@ declare global {
   interface Window {
     clearCanvas?: () => void;
   }
-}
-
-function Avatar({ color }: { color: string }) {
-  return (
-    <div className="relative w-full h-full">
-      <div
-        className="absolute inset-0 rounded-full"
-        style={{ backgroundColor: color }}
-      ></div>
-      <div className="absolute top-1/4 left-1/2 transform -translate-x-1/2 w-3/5 h-1/5 bg-white rounded-full flex justify-center items-center">
-        <div className="w-1/2 h-3/4 bg-black rounded-full"></div>
-      </div>
-      <div className="absolute bottom-1/4 left-1/2 transform -translate-x-1/2 w-2/5 h-1/6 bg-black rounded-full"></div>
-    </div>
-  );
 }
