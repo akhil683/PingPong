@@ -1,33 +1,42 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import { ChevronLeft, ChevronRight } from "lucide-react"
-import Logo from "../logo"
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import Logo from "../logo";
 
 export default function HeroPage() {
-  const router = useRouter()
-  const [selectedAvatar, setSelectedAvatar] = useState(0)
-  const [playerName, setPlayerName] = useState("")
-  const avatarColors = ["#ff4040", "#ff8800", "#ffff00", "#44cc44", "#66ffff", "#4444ff", "#cc44cc", "#ff88cc"]
+  const router = useRouter();
+  const [selectedAvatar, setSelectedAvatar] = useState(0);
+  const [playerName, setPlayerName] = useState("");
+  const avatarColors = [
+    "#ff4040",
+    "#ff8800",
+    "#ffff00",
+    "#44cc44",
+    "#66ffff",
+    "#4444ff",
+    "#cc44cc",
+    "#ff88cc",
+  ];
 
   const nextAvatar = () => {
-    setSelectedAvatar((prev) => (prev + 1) % avatarColors.length)
-  }
+    setSelectedAvatar((prev) => (prev + 1) % avatarColors.length);
+  };
 
   const prevAvatar = () => {
-    setSelectedAvatar((prev) => (prev - 1 + avatarColors.length) % avatarColors.length)
-  }
+    setSelectedAvatar(
+      (prev) => (prev - 1 + avatarColors.length) % avatarColors.length,
+    );
+  };
 
   const handlePlay = () => {
     // Navigate to the game page
-    router.push("/game/1")
-  }
+    router.push("/game/1");
+  };
 
   return (
-    <div
-      className="min-h-screen flex flex-col items-center bg-sky-700 justify-center relative px-4"
-    >
+    <div className="min-h-screen flex flex-col items-center bg-sky-700 justify-center relative px-4">
       {/* Logo */}
       <div className="mb-4">
         <div className="text-6xl flex items-center justify-center">
@@ -64,7 +73,10 @@ export default function HeroPage() {
 
         {/* Avatar Selection */}
         <div className="flex items-center justify-center my-4">
-          <button onClick={prevAvatar} className="bg-black text-white p-1 rounded mr-2">
+          <button
+            onClick={prevAvatar}
+            className="bg-black text-white p-1 rounded mr-2"
+          >
             <ChevronLeft size={24} />
           </button>
 
@@ -72,13 +84,12 @@ export default function HeroPage() {
             <Avatar color={avatarColors[selectedAvatar]} size="large" />
           </div>
 
-          <button onClick={nextAvatar} className="bg-black text-white p-1 rounded ml-2">
+          <button
+            onClick={nextAvatar}
+            className="bg-black text-white p-1 rounded ml-2"
+          >
             <ChevronRight size={24} />
           </button>
-
-          {/* <button className="ml-6 bg-white p-1 rounded"> */}
-          {/*   <Dice size={24} className="text-yellow-500" /> */}
-          {/* </button> */}
         </div>
 
         {/* Action Buttons */}
@@ -107,20 +118,22 @@ export default function HeroPage() {
       {/*   </div> */}
       {/* </div> */}
     </div>
-  )
+  );
 }
 
-function Avatar({ color, size = "small" }: { color?: string, size?: string }) {
-  const sizeClass = size === "large" ? "w-16 h-16" : "w-8 h-8"
+function Avatar({ color, size = "small" }: { color?: string; size?: string }) {
+  const sizeClass = size === "large" ? "w-16 h-16" : "w-8 h-8";
 
   return (
     <div className={`relative ${sizeClass}`}>
-      <div className="absolute inset-0 rounded-full" style={{ backgroundColor: color }}></div>
+      <div
+        className="absolute inset-0 rounded-full"
+        style={{ backgroundColor: color }}
+      ></div>
       <div className="absolute top-1/4 left-1/2 transform -translate-x-1/2 w-3/5 h-1/5 bg-white rounded-full flex justify-center items-center">
         <div className="w-1/2 h-3/4 bg-black rounded-full"></div>
       </div>
       <div className="absolute bottom-1/4 left-1/2 transform -translate-x-1/2 w-2/5 h-1/6 bg-black rounded-full"></div>
     </div>
-  )
+  );
 }
-
