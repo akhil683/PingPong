@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import Logo from "../logo";
 import GameLeaderboard from "./game-leaderboard";
+import GameChat from "./game-chat";
 
 // Define types for better type safety
 type Tool = "pen" | "eraser" | "rectangle" | "square" | "circle" | "triangle";
@@ -633,6 +634,13 @@ export default function GamePage() {
             </div>
 
             {/* Chat Container */}
+            <GameChat
+              chatContainerRef={chatContainerRef}
+              messages={messages}
+              guessInput={guessInput}
+              setGuessInput={setGuessInput}
+              handleSendMessage={handleSendMessage}
+            />
           </div>
         </div>
 

@@ -5,7 +5,7 @@ import { Message } from "./game-page";
 interface PropType {
   chatContainerRef: Ref<HTMLDivElement>;
   messages: Message[];
-  handleSendMessage: () => void;
+  handleSendMessage: (e: React.FormEvent) => void;
   guessInput: string;
   setGuessInput: (guessInput: string) => void;
 }
