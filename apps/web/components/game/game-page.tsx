@@ -139,7 +139,7 @@ export default function GamePage() {
     }
 
     // Start drawing
-    function startDraw(e) {
+    function startDraw(e: MouseEvent | TouchEvent) {
       isDrawing = true;
 
       // Get coordinates
@@ -150,7 +150,12 @@ export default function GamePage() {
       lastY = coords.y;
 
       // For shapes, save the current canvas state to the temp canvas
-      if (currentTool !== "pen" && currentTool !== "eraser") {
+      if (
+        currentTool !== "pen" &&
+        currentTool !== "eraser" &&
+        tempCtx &&
+        canvas
+      ) {
         tempCtx.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
         tempCtx.drawImage(canvas, 0, 0);
       }
@@ -171,7 +176,7 @@ export default function GamePage() {
     }
 
     // Draw
-    function draw(e) {
+    function draw(e: MouseEvent | TouchEvent) {
       if (!isDrawing) return;
 
       // Get coordinates
@@ -217,24 +222,26 @@ export default function GamePage() {
       saveCanvasState();
 
       // Update temp canvas with the current state
-      if (tempCtx) {
+      if (tempCtx && canvas) {
         tempCtx.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
         tempCtx.drawImage(canvas, 0, 0);
       }
     }
 
     // Helper function to get coordinates from mouse or touch event
-    function getCoordinates(e) {
+    function getCoordinates(e: MouseEvent | TouchEvent) {
       if (!e || !canvas) return { x: 0, y: 0 };
 
       const rect = canvas.getBoundingClientRect();
-      let clientX, clientY;
+      let clientX: number, clientY: number;
 
-      if (e.touches && e.touches.length > 0) {
+      if (e instanceof TouchEvent && e.touches.length > 0) {
+        const touch = e.touches[0];
+        if (!touch) return { x: 0, y: 0 };
         // Touch event
-        clientX = e.touches[0].clientX;
-        clientY = e.touches[0].clientY;
-      } else if (e.clientX !== undefined && e.clientY !== undefined) {
+        clientX = touch.clientX;
+        clientY = touch.clientY;
+      } else if (e instanceof MouseEvent) {
         // Mouse event
         clientX = e.clientX;
         clientY = e.clientY;
@@ -249,7 +256,7 @@ export default function GamePage() {
     }
 
     // Helper function to set drawing properties
-    function setDrawingProperties(context) {
+    function setDrawingProperties(context: CanvasRenderingContext2D) {
       if (currentTool === "eraser") {
         context.globalCompositeOperation = "destination-out";
         context.strokeStyle = "rgba(255,255,255,1)";
@@ -264,7 +271,13 @@ export default function GamePage() {
     }
 
     // Helper function to draw shapes
-    function drawShape(context, x1, y1, x2, y2) {
+    function drawShape(
+      context: CanvasRenderingContext2D,
+      x1: number,
+      y1: number,
+      x2: number,
+      y2: number,
+    ) {
       switch (currentTool) {
         case "rectangle":
           context.rect(x1, y1, x2 - x1, y2 - y1);
