@@ -18,7 +18,7 @@ export default function GameChat({
   setGuessInput,
 }: PropType) {
   return (
-    <div className="w-64 bg-white/90 backdrop-blur-sm rounded-lg overflow-hidden shadow-xl border border-white/20 flex flex-col">
+    <div className="md:w-64 w-full h-full bg-white/90 backdrop-blur-sm rounded-lg overflow-hidden shadow-xl border border-white/20 flex flex-col">
       {/* Chat Messages */}
       <div className="w-full relative h-[calc(100%-50px)]">
         <div
@@ -60,13 +60,13 @@ export default function GameChat({
         <input
           type="text"
           placeholder="Type your guess here..."
-          className="flex-1 p-2 rounded-l-md border text-black placeholder:text-gray-600 border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="flex-1 p-2 rounded-l-md border-2 text-black placeholder:text-gray-600 border-gray-300 focus:border-blue-500 focus:outline-none"
           value={guessInput}
           onChange={(e) => setGuessInput(e.target.value)}
         />
         <button
           type="submit"
-          className="bg-blue-500 text-white p-2 rounded-r-md hover:bg-blue-600 transition-colors"
+          className="bg-blue-500 text-white h-full p-2 rounded-r-md hover:bg-blue-600 transition-colors"
         >
           <Send size={18} />
         </button>

@@ -387,12 +387,14 @@ export default function GamePage() {
       {/* Main Game Area */}
       <div className="flex flex-1 px-4 pb-4 gap-4 relative z-10">
         {/* Left Sidebar - Player List */}
-        <GameLeaderboard
-          timeLeft={timeLeft}
-          currentRound={currentRound}
-          totalRounds={totalRounds}
-          players={players}
-        />
+        <div className="max-md:hidden">
+          <GameLeaderboard
+            timeLeft={timeLeft}
+            currentRound={currentRound}
+            totalRounds={totalRounds}
+            players={players}
+          />
+        </div>
 
         {/* Main Game Content */}
         <div className="flex-1 flex flex-col">
@@ -405,9 +407,9 @@ export default function GamePage() {
           </div>
 
           {/* Game Area with Canvas and Chat */}
-          <div className="flex-1 flex gap-2">
+          <div className="flex-1 flex gap-2 max-md:flex-col">
             {/* Drawing Canvas */}
-            <div className="flex-1 bg-white rounded-lg overflow-hidden relative shadow-xl border border-white/20">
+            <div className="flex-1 max-md:min-h-[40vh] bg-white rounded-lg overflow-hidden relative shadow-xl border border-white/20">
               {/* Thumbs up/down */}
               <div className="absolute top-2 right-2 flex gap-2 z-10">
                 <button className="p-1 bg-green-100 rounded-full hover:bg-green-200 transition-colors">
@@ -419,10 +421,10 @@ export default function GamePage() {
               </div>
 
               {/* Canvas */}
-              <div className="w-full h-full relative">
+              <div className="w-full h-full bg-red-500 relative">
                 <canvas
                   ref={canvasRef}
-                  className="absolute top-0 left-0 touch-none"
+                  className="absolute top-0 left-0 h-full touch-none"
                   style={{ cursor: "crosshair" }}
                 />
               </div>

@@ -21,7 +21,7 @@ export default function ToolSelection({
       {tools.map((tool) => (
         <button
           key={tool.id}
-          className={`w-8 h-8 rounded-sm flex items-center justify-center ${currentTool === tool.id ? "bg-blue-100 ring-2 ring-blue-500" : "bg-white"} hover:bg-blue-50 transition-colors`}
+          className={`md:w-8 md:h-8 w-6 h-6 rounded-sm flex items-center justify-center ${currentTool === tool.id ? "bg-blue-500" : "bg-gray-400"} hover:bg-gray-500 transition-colors`}
           style={{ border: "1px solid #ccc" }}
           onClick={() => setCurrentTool(tool.id)}
           title={tool.label}
