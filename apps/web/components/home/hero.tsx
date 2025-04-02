@@ -2,32 +2,24 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import Image from "next/image";
+import { ChevronLeft, ChevronRight, Dice1Icon as Dice } from "lucide-react";
+import AnimatedBackground from "../animated-background";
+import GhibliAvatar from "../ghibli-avatar";
+import { colors } from "../../constants/GameTools";
 import Logo from "../logo";
 
-export default function HeroPage() {
+export default function SkribblClone() {
   const router = useRouter();
   const [selectedAvatar, setSelectedAvatar] = useState(0);
   const [playerName, setPlayerName] = useState("");
-  const avatarColors = [
-    "#ff4040",
-    "#ff8800",
-    "#ffff00",
-    "#44cc44",
-    "#66ffff",
-    "#4444ff",
-    "#cc44cc",
-    "#ff88cc",
-  ];
 
   const nextAvatar = () => {
-    setSelectedAvatar((prev) => (prev + 1) % avatarColors.length);
+    setSelectedAvatar((prev) => (prev + 1) % colors.length);
   };
 
   const prevAvatar = () => {
-    setSelectedAvatar(
-      (prev) => (prev - 1 + avatarColors.length) % avatarColors.length,
-    );
+    setSelectedAvatar((prev) => (prev - 1 + colors.length) % colors.length);
   };
 
   const handlePlay = () => {
@@ -36,34 +28,53 @@ export default function HeroPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center bg-sky-700 justify-center relative px-4">
+    <div className="min-h-screen flex flex-col items-center justify-center relative">
+      {/* Animated Background */}
+      <AnimatedBackground />
+
       {/* Logo */}
-      <div className="mb-4">
+      <div className="mb-8 relative">
         <div className="text-6xl flex items-center justify-center">
           <Logo />
         </div>
 
         {/* Avatar Row */}
-        <div className="flex justify-center mt-2">
-          {avatarColors.map((color, index) => (
-            <div key={index} className="mx-1">
-              <Avatar color={color} />
+        <div className="flex justify-center mt-4">
+          {colors.map((color, index) => (
+            <div
+              key={index}
+              className="mx-1 animate-bounce"
+              style={{ animationDelay: `${index * 0.1}s` }}
+            >
+              <GhibliAvatar color={color} />
             </div>
           ))}
         </div>
       </div>
 
       {/* Main Panel */}
-      <div className="bg-blue-800 rounded-lg p-6 w-full max-w-md">
-        <div className="flex gap-2 mb-4">
+      <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-8 w-full max-w-md shadow-xl border border-green-100 relative overflow-hidden">
+        {/* Decorative elements */}
+        <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-green-200 via-blue-200 to-pink-200"></div>
+        <div className="absolute -top-4 -right-4 w-16 h-16">
+          <Image
+            src="/placeholder.svg?height=64&width=64"
+            alt="Leaf decoration"
+            width={64}
+            height={64}
+            className="opacity-30"
+          />
+        </div>
+
+        <div className="flex gap-2 mb-6">
           <input
             type="text"
             placeholder="Enter your name"
-            className="flex-1 px-3 py-2 rounded border border-gray-300 focus:outline-none bg-white text-black"
+            className="flex-1 placeholder:text-gray-500 text-gray-800 px-4 py-3 rounded-full border border-green-200 focus:outline-none focus:ring-2 focus:ring-green-300 bg-white/80 font-ghibli text-lg"
             value={playerName}
             onChange={(e) => setPlayerName(e.target.value)}
           />
-          {/* <select className="px-3 py-2 rounded border border-gray-300 focus:outline-none bg-white text-black"> */}
+          {/* <select className="px-4 py-3 rounded-full border border-green-200 focus:outline-none focus:ring-2 focus:ring-green-300 bg-white/80 font-ghibli"> */}
           {/*   <option>English</option> */}
           {/*   <option>Español</option> */}
           {/*   <option>Français</option> */}
@@ -72,21 +83,21 @@ export default function HeroPage() {
         </div>
 
         {/* Avatar Selection */}
-        <div className="flex items-center justify-center my-4">
+        <div className="flex items-center justify-center my-8">
           <button
             onClick={prevAvatar}
-            className="bg-black text-white p-1 rounded mr-2"
+            className="bg-green-100 text-green-700 p-2 rounded-full mr-2 hover:bg-green-200 transition-colors"
           >
             <ChevronLeft size={24} />
           </button>
 
-          <div className="relative mx-4">
-            <Avatar color={avatarColors[selectedAvatar]} size="large" />
+          <div className="relative mx-4 animate-float">
+            <GhibliAvatar color={colors[selectedAvatar]} size="large" />
           </div>
 
           <button
             onClick={nextAvatar}
-            className="bg-black text-white p-1 rounded ml-2"
+            className="bg-green-100 text-green-700 p-2 rounded-full ml-2 hover:bg-green-200 transition-colors"
           >
             <ChevronRight size={24} />
           </button>
@@ -94,46 +105,40 @@ export default function HeroPage() {
 
         {/* Action Buttons */}
         <button
-          className="w-full bg-green-400 hover:bg-green-500 text-white font-bold py-3 px-4 rounded mb-3 text-2xl cursor-pointer"
+          className="w-full bg-green-400 hover:bg-green-500 text-white font-ghibli py-4 px-6 rounded-full mb-4 text-2xl transition-all shadow-md hover:shadow-lg transform hover:-translate-y-1 active:translate-y-0"
           onClick={handlePlay}
         >
           Play!
         </button>
 
-        <button className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-4 rounded text-xl cursor-pointer">
+        <button className="w-full bg-blue-400 hover:bg-blue-500 text-white font-ghibli py-4 px-6 rounded-full text-xl transition-colors shadow-md hover:shadow-lg transform hover:-translate-y-1 active:translate-y-0 duration-200">
           Create Private Room
         </button>
+
+        {/* Decorative grass */}
+        <div className="absolute bottom-0 left-0 w-full h-8 overflow-hidden">
+          <div className="relative w-full h-full">
+            {Array.from({ length: 20 }).map((_, i) => (
+              <div
+                key={i}
+                className="absolute bottom-0 bg-green-400"
+                style={{
+                  left: `${i * 5}%`,
+                  height: `${4 + Math.sin(i) * 2}px`,
+                  width: "8px",
+                  borderTopLeftRadius: "50%",
+                  borderTopRightRadius: "50%",
+                }}
+              />
+            ))}
+          </div>
+        </div>
       </div>
 
-      {/* Ad Banner */}
-      {/* <div className="absolute right-4 top-1/2 transform -translate-y-1/2 hidden lg:block"> */}
-      {/*   <div className="w-64 h-96 bg-gray-200 rounded overflow-hidden"> */}
-      {/*     <Image */}
-      {/*       src="/placeholder.svg?height=384&width=256" */}
-      {/*       alt="Advertisement" */}
-      {/*       width={256} */}
-      {/*       height={384} */}
-      {/*       className="w-full h-full object-cover" */}
-      {/*     /> */}
-      {/*   </div> */}
-      {/* </div> */}
-    </div>
-  );
-}
-
-function Avatar({ color, size = "small" }: { color?: string; size?: string }) {
-  const sizeClass = size === "large" ? "w-16 h-16" : "w-8 h-8";
-
-  return (
-    <div className={`relative ${sizeClass}`}>
-      <div
-        className="absolute inset-0 rounded-full"
-        style={{ backgroundColor: color }}
-      ></div>
-      <div className="absolute top-1/4 left-1/2 transform -translate-x-1/2 w-3/5 h-1/5 bg-white rounded-full flex justify-center items-center">
-        <div className="w-1/2 h-3/4 bg-black rounded-full"></div>
+      {/* Decorative elements */}
+      <div className="absolute bottom-4 left-4 text-xs text-gray-500 font-ghibli">
+        "The world is filled with wonders, just waiting to be drawn."
       </div>
-      <div className="absolute bottom-1/4 left-1/2 transform -translate-x-1/2 w-2/5 h-1/6 bg-black rounded-full"></div>
     </div>
   );
 }

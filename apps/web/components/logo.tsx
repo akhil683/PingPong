@@ -1,27 +1,17 @@
 export default function Logo() {
   return (
     <h1 className="font-bold">
-      <span className="text-red-500  [text-shadow:2px_2px_0px_black]">p</span>
-      <span className="text-orange-500  [text-shadow:2px_2px_0px_black]">
-        i
-      </span>
-      <span className="text-yellow-400  [text-shadow:2px_2px_0px_black]">
-        n
-      </span>
-      <span className="text-green-500  [text-shadow:2px_2px_0px_black]">g</span>
-      <span className="text-cyan-400  [text-shadow:2px_2px_0px_black]">p</span>
-      <span className="text-blue-500  [text-shadow:2px_2px_0px_black]">o</span>
-      <span className="text-white  [text-shadow:2px_2px_0px_black]">n</span>
-      <span className="text-orange-500  [text-shadow:2px_2px_0px_black]">
-        g
-      </span>
-      <span className="text-pink-500  [text-shadow:2px_2px_0px_black]">.</span>
-      <span className="text-indigo-500  [text-shadow:2px_2px_0px_black]">
-        i
-      </span>
-      <span className="text-orange-500  [text-shadow:2px_2px_0px_black]">
-        o
-      </span>
+      <span className="text-red-500">p</span>
+      <span className="text-orange-500">i</span>
+      <span className="text-yellow-500">n</span>
+      <span className="text-green-500">g</span>
+      <span className="text-cyan-400">p</span>
+      <span className="text-blue-500">o</span>
+      <span className="text-yellow-500">n</span>
+      <span className="text-orange-500">g</span>
+      <span className="text-pink-500">.</span>
+      <span className="text-indigo-500">i</span>
+      <span className="text-orange-500">o</span>
       {/* <Pencil className="text-yellow-500 h-12 w-12 inline-block" /> */}
       {/* <span className="inline-block ml-2 transform rotate-12"> */}
       {/*   <div className="w-6 h-12 bg-orange-500 rounded-t-sm relative"> */}
