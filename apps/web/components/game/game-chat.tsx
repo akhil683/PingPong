@@ -18,37 +18,39 @@ export default function GameChat({
   setGuessInput,
 }: PropType) {
   return (
-    <div className="h-64 md:h-auto md:w-64 bg-white/80 backdrop-blur-sm rounded-3xl overflow-hidden shadow-xl border border-pink-100 flex flex-col">
+    <div className="h-64 md:h-full md:w-64 bg-white/80 backdrop-blur-sm rounded-3xl overflow-hidden shadow-xl border border-pink-100 flex flex-col">
       {/* Chat Messages */}
-      <div
-        ref={chatContainerRef}
-        className="flex-1 overflow-y-auto p-3 space-y-2"
-        style={{ maxHeight: "calc(100% - 60px)" }}
-      >
-        {messages.map((message, index) => (
-          <div
-            key={index}
-            className={`${message.type === "system" ? "text-center italic text-gray-500" : ""}`}
-          >
-            {message.type === "system" ? (
-              <div className="bg-pink-50 rounded-full py-1 px-3 text-sm font-ghibli text-pink-700">
-                {message.content}
-              </div>
-            ) : (
-              <div className="flex items-start">
-                <span
-                  className="font-bold mr-1 font-ghibli"
-                  style={{ color: message.color }}
-                >
-                  {message.player}:
-                </span>
-                <span className="text-gray-800 font-ghibli">
+      <div className="w-full relative h-[calc(100%-50px)]">
+        <div
+          ref={chatContainerRef}
+          className="overflow-y-scroll p-2 w-full space-y-2 absolute bottom-0 h-full"
+          style={{ maxHeight: "calc(100%)" }}
+        >
+          {messages.map((message, index) => (
+            <div
+              key={index}
+              className={`${message.type === "system" ? "text-center italic text-gray-500" : ""}`}
+            >
+              {message.type === "system" ? (
+                <div className="bg-pink-50 rounded-full py-1 px-3 text-sm font-ghibli text-pink-700">
                   {message.content}
-                </span>
-              </div>
-            )}
-          </div>
-        ))}
+                </div>
+              ) : (
+                <div className="flex items-start">
+                  <span
+                    className="font-bold mr-1 font-ghibli"
+                    style={{ color: message.color }}
+                  >
+                    {message.player}:
+                  </span>
+                  <span className="text-gray-800 font-ghibli">
+                    {message.content}
+                  </span>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
       </div>
 
       {/* Chat Input */}

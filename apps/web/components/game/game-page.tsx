@@ -19,8 +19,8 @@ import {
 import ToolSelection from "../tools/tool-selection";
 import ColorSelection from "../tools/color-selection";
 import BrushSelection from "../tools/brush-selection";
-import GhibliAvatar from "../ghibli-avatar";
 import AnimatedBackground from "../animated-background";
+import { useSocket } from "../../lib/context/socket-context";
 
 export default function GamePage() {
   // Game state
@@ -374,11 +374,17 @@ export default function GamePage() {
   };
 
   // Send message handler
+  const { sendMessage } = useSocket();
   const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!guessInput.trim()) return;
-
+    sendMessage({
+      type: "message",
+      player: "poing (You)",
+      content: guessInput,
+      color: "#ff4040",
+    });
     setMessages([
       ...messages,
       {
