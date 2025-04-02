@@ -21,8 +21,8 @@ export default function BrushSelection({
       {brushSizes.map((size) => (
         <button
           key={size}
-          className={`md:w-8 md:h-8 w-6 h-6 rounded-sm flex items-center justify-center bg-white ${brushSize === size ? "ring-2 ring-blue-500 transform scale-110 transition-transform" : "hover:scale-105 transition-transform"}`}
-          style={{ border: "1px solid #ccc" }}
+          className={`w-8 h-8 rounded-full flex items-center justify-center bg-white ${brushSize === size ? "ring-2 ring-yellow-400 transform scale-110 transition-transform" : "hover:scale-105 transition-transform"}`}
+          style={{ border: "1px solid #fef9c3" }}
           onClick={() => setBrushSize(size)}
         >
           <div

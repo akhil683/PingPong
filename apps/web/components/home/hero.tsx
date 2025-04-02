@@ -3,10 +3,9 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { ChevronLeft, ChevronRight, Dice1Icon as Dice } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import AnimatedBackground from "../animated-background";
 import GhibliAvatar from "../ghibli-avatar";
-import { colors } from "../../constants/GameTools";
 import Logo from "../logo";
 
 export default function SkribblClone() {
@@ -26,6 +25,17 @@ export default function SkribblClone() {
     // Navigate to the game page
     router.push("/game/1");
   };
+
+  const colors = [
+    "#ff9d8a",
+    "#ffbe7d",
+    "#ffe699",
+    "#b3e6b3",
+    "#a6d9f7",
+    "#c7b3e6",
+    "#f7c7e6",
+    "#f7a6c7",
+  ];
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center relative">

@@ -18,55 +18,54 @@ export default function GameChat({
   setGuessInput,
 }: PropType) {
   return (
-    <div className="md:w-64 w-full h-full bg-white/90 backdrop-blur-sm rounded-lg overflow-hidden shadow-xl border border-white/20 flex flex-col">
+    <div className="h-64 md:h-auto md:w-64 bg-white/80 backdrop-blur-sm rounded-3xl overflow-hidden shadow-xl border border-pink-100 flex flex-col">
       {/* Chat Messages */}
-      <div className="w-full relative h-[calc(100%-50px)]">
-        <div
-          ref={chatContainerRef}
-          className="overflow-y-scroll p-2 w-full space-y-2 absolute bottom-0 h-full"
-        >
-          {messages.map((message, index) => (
-            <div
-              key={index}
-              className={`${message.type === "system" ? "text-center italic text-gray-500" : ""}`}
-            >
-              {message.type === "system" ? (
-                <div className="bg-gray-100 rounded py-1 px-2 text-sm">
+      <div
+        ref={chatContainerRef}
+        className="flex-1 overflow-y-auto p-3 space-y-2"
+        style={{ maxHeight: "calc(100% - 60px)" }}
+      >
+        {messages.map((message, index) => (
+          <div
+            key={index}
+            className={`${message.type === "system" ? "text-center italic text-gray-500" : ""}`}
+          >
+            {message.type === "system" ? (
+              <div className="bg-pink-50 rounded-full py-1 px-3 text-sm font-ghibli text-pink-700">
+                {message.content}
+              </div>
+            ) : (
+              <div className="flex items-start">
+                <span
+                  className="font-bold mr-1 font-ghibli"
+                  style={{ color: message.color }}
+                >
+                  {message.player}:
+                </span>
+                <span className="text-gray-800 font-ghibli">
                   {message.content}
-                </div>
-              ) : (
-                <div className="flex items-start">
-                  <span
-                    className="font-bold mr-1"
-                    style={{ color: message.color }}
-                  >
-                    {(message?.player?.length as number) > 8
-                      ? `${message.player?.slice(0, 5)}...`
-                      : message.player}
-                  </span>
-                  <span className="text-gray-800">{message.content}</span>
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
+                </span>
+              </div>
+            )}
+          </div>
+        ))}
       </div>
 
       {/* Chat Input */}
       <form
         onSubmit={handleSendMessage}
-        className="border-t border-gray-200 p-2 bg-white flex items-center"
+        className="border-t border-pink-100 p-3 flex items-center"
       >
         <input
           type="text"
           placeholder="Type your guess here..."
-          className="flex-1 p-2 rounded-l-md border-2 text-black placeholder:text-gray-600 border-gray-300 focus:border-blue-500 focus:outline-none"
+          className="flex-1 placeholder:text-gray-400 text-gray-700 p-2 rounded-full border border-pink-200 focus:outline-none focus:ring-2 focus:ring-pink-300 font-ghibli text-sm"
           value={guessInput}
           onChange={(e) => setGuessInput(e.target.value)}
         />
         <button
           type="submit"
-          className="bg-blue-500 text-white h-full p-2 rounded-r-md hover:bg-blue-600 transition-colors"
+          className="bg-pink-400 text-white p-2 rounded-full hover:bg-pink-500 transition-colors ml-2"
         >
           <Send size={18} />
         </button>

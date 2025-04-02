@@ -106,14 +106,21 @@ export const players: Player[] = [
 
 // Available colors and tools
 export const colors: string[] = [
-  "#ff9d8a",
-  "#ffbe7d",
-  "#ffe699",
-  "#b3e6b3",
-  "#a6d9f7",
-  "#c7b3e6",
-  "#f7c7e6",
-  "#f7a6c7",
+  "#000000",
+  "#444444",
+  "#888888",
+  "#cccccc",
+  "#ffffff",
+  "#ff4040",
+  "#ff8800",
+  "#ffff00",
+  "#44cc44",
+  "#66ffff",
+  "#4444ff",
+  "#cc44cc",
+  "#ff88cc",
+  "#884400",
+  "#44aaaa",
 ];
 
 export const tools = [

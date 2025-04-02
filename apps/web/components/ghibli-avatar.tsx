@@ -26,8 +26,8 @@ export default function GhibliAvatar({
       <div className="absolute bottom-1/4 left-1/2 transform -translate-x-1/2 w-1/3 h-1/6 bg-black rounded-full"></div>
 
       {/* Whiskers */}
-      <div className="absolute top-1/2 left-0 w-1/4 h-0.5 bg-black transform -translate-y-1/2 -translate-x-1/5"></div>
-      <div className="absolute top-1/2 right-0 w-1/4 h-0.5 bg-black transform -translate-y-1/2 translate-x-1/5"></div>
+      {/* <div className="absolute top-1/2 left-0 w-1/4 h-0.5 bg-black transform -translate-y-1/2 -translate-x-1/5"></div> */}
+      {/* <div className="absolute top-1/2 right-0 w-1/4 h-0.5 bg-black transform -translate-y-1/2 translate-x-1/5"></div> */}
     </div>
   );
 }
