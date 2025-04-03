@@ -19,7 +19,9 @@ export type Tool =
 
 export interface Message {
   type: MessageType;
+  currentPlayer?: string;
   content: string;
+  correctWord?: string;
   player?: string;
   color?: string;
 }

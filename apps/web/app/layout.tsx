@@ -1,18 +1,12 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Patrick_Hand } from "next/font/google";
 import { SocketProvider } from "../lib/context/socket-context";
 
 import "./globals.css";
 
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const geistSans = Patrick_Hand({
   subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+  weight: ["400"],
 });
 
 export const metadata: Metadata = {
@@ -26,13 +20,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <SocketProvider>
-        <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-        >
-          {children}
-        </body>
+        <body className={`${geistSans.className} antialiased`}>{children}</body>
       </SocketProvider>
     </html>
   );

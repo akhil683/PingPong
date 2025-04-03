@@ -21,10 +21,10 @@ export default function ColorSelection({
       {colors.map((color) => (
         <button
           key={color}
-          className={`md:w-8 md:h-8 w-6 h-6 rounded-sm flex items-center justify-center ${currentColor === color ? "ring-2 ring-blue-500 transform scale-110 transition-transform" : "hover:scale-105 transition-transform"}`}
+          className={`w-8 h-8 rounded-full flex items-center justify-center ${currentColor === color ? "ring-2 ring-yellow-400 transform scale-110 transition-transform" : "hover:scale-105 transition-transform"}`}
           style={{
             backgroundColor: color,
-            border: "1px solid #ccc",
+            border: "1px solid #fef9c3",
             opacity: currentTool === "eraser" ? 0.5 : 1,
           }}
           onClick={() => {

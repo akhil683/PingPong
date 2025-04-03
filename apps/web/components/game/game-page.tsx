@@ -19,6 +19,8 @@ import {
 import ToolSelection from "../tools/tool-selection";
 import ColorSelection from "../tools/color-selection";
 import BrushSelection from "../tools/brush-selection";
+import AnimatedBackground from "../animated-background";
+import { useSocket } from "../../lib/context/socket-context";
 
 export default function GamePage() {
   // Game state
@@ -372,16 +374,27 @@ export default function GamePage() {
   };
 
   // Send message handler
+  const { sendMessage } = useSocket();
+
   const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!guessInput.trim()) return;
-
+    if (!guessInput) return;
+    sendMessage({
+      type: "message",
+      currentPlayer: "you",
+      player: "poing (You)",
+      correctWord: "hi",
+      content: guessInput,
+      color: "#ff4040",
+    });
     setMessages([
       ...messages,
       {
         type: "message",
+        currentPlayer: "you",
         player: "poing (You)",
+        correctWord: "hi",
         content: guessInput,
         color: "#ff4040",
       },
@@ -391,7 +404,8 @@ export default function GamePage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-blue-800">
+    <div className="min-h-screen flex flex-col">
+      <AnimatedBackground />
       {/* Logo */}
       <div className="text-4xl flex justify-center py-2 relative z-10">
         <Logo />
@@ -400,14 +414,12 @@ export default function GamePage() {
       {/* Main Game Area */}
       <div className="flex flex-1 px-4 pb-4 gap-4 relative z-10">
         {/* Left Sidebar - Player List */}
-        <div className="max-md:hidden">
-          <GameLeaderboard
-            timeLeft={timeLeft}
-            currentRound={currentRound}
-            totalRounds={totalRounds}
-            players={players}
-          />
-        </div>
+        <GameLeaderboard
+          timeLeft={timeLeft}
+          totalRounds={totalRounds}
+          currentRound={currentRound}
+          players={players}
+        />
 
         {/* Main Game Content */}
         <div className="flex-1 flex flex-col">
@@ -434,7 +446,7 @@ export default function GamePage() {
               </div>
 
               {/* Canvas */}
-              <div className="w-full h-full bg-red-500 relative">
+              <div className="w-full h-full relative">
                 <canvas
                   ref={canvasRef}
                   className="absolute top-0 left-0 h-full touch-none"
@@ -443,7 +455,7 @@ export default function GamePage() {
               </div>
 
               {/* Drawing Tools */}
-              <div className="absolute bottom-0 left-0 right-0 bg-gray-100/90 backdrop-blur-sm p-2 flex flex-wrap items-center gap-2 border-t border-gray-200">
+              <div className="absolute bottom-0 left-0 right-0 bg-yellow-50/90 backdrop-blur-sm p-3 flex flex-wrap items-center gap-2 border-t border-yellow-100">
                 {/* Tool Selection */}
                 <ToolSelection
                   tools={tools}
@@ -471,7 +483,7 @@ export default function GamePage() {
 
                 {/* Clear Button */}
                 <button
-                  className="px-3 py-1 bg-red-500 text-white rounded-sm hover:bg-red-600 transition-colors transform hover:scale-105 active:scale-95 flex items-center gap-1"
+                  className="px-4 py-2 bg-red-400 text-white rounded-full hover:bg-red-500 transition-colors transform hover:scale-105 active:scale-95 flex items-center gap-1 font-ghibli"
                   onClick={clearCanvas}
                 >
                   <Trash2 size={16} />
