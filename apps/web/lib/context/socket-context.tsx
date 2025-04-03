@@ -1,21 +1,14 @@
 "use client";
-import { Message } from "postcss";
 import React, { useCallback, useEffect, useContext, useState } from "react";
 import { io, Socket } from "socket.io-client";
+import { Message } from "../../constants/GameTools";
 
 interface SocketProviderProps {
   children?: React.ReactNode;
 }
-interface MessageType {
-  type: string;
-  player: string;
-  content: string;
-  color: string;
-  isDrawing?: string;
-}
 
 interface ISocketContext {
-  sendMessage: (msg: MessageType) => any;
+  sendMessage: (msg: Message) => any;
 }
 
 const SocketContext = React.createContext<ISocketContext | null>(null);
@@ -25,7 +18,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
 
   const sendMessage: ISocketContext["sendMessage"] = useCallback(
     (message) => {
-      console.log("Send Message", message.content);
+      console.log("Send Message", message);
       if (socket) {
         socket.emit("event:message", message);
       }
@@ -38,7 +31,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    const _socket = io("http://localhost:8000");
+    const _socket = io("http://localhost:5000");
     _socket.on("message", onMessageReceived);
     setSocket(_socket);
 

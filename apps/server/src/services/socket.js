@@ -2,8 +2,6 @@ const { Server } = require("socket.io");
 const Redis = require("ioredis");
 const config = require("../config/environment");
 
-console.log(config.redis.HOST);
-
 const RedisConfig = {
   host: config.redis.HOST,
   port: config.redis.PORT,
@@ -22,21 +20,22 @@ class SocketService {
         origin: "*",
       },
     });
+    sub.subscribe("MESSAGES");
   }
+
   initListener() {
-    const io = this.io;
+    const io = this._io;
     io.on("connect", (socket) => {
       console.log(`New Socket Connected`, socket.id);
-      socket.on("event:message", async ({ message }) => {
-        console.log("new messae received", message);
-        io.emit("message", message);
-        await pub.publish("MESSAGES", JSON.stringify({ message }));
+      socket.on("event:message", async (message) => {
+        console.log("new message received", message);
+        await pub.publish("MESSAGES", JSON.stringify(message));
       });
     });
 
     sub.on("message", (channel, message) => {
       if (channel === "MESSAGES") {
-        io.emit("message", message);
+        io.emit("message", JSON.parse(message));
       }
     });
   }

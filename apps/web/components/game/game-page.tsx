@@ -375,13 +375,16 @@ export default function GamePage() {
 
   // Send message handler
   const { sendMessage } = useSocket();
+
   const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!guessInput.trim()) return;
+    if (!guessInput) return;
     sendMessage({
       type: "message",
+      currentPlayer: "you",
       player: "poing (You)",
+      correctWord: "hi",
       content: guessInput,
       color: "#ff4040",
     });
@@ -389,7 +392,9 @@ export default function GamePage() {
       ...messages,
       {
         type: "message",
+        currentPlayer: "you",
         player: "poing (You)",
+        correctWord: "hi",
         content: guessInput,
         color: "#ff4040",
       },

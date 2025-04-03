@@ -1,23 +1,22 @@
-const http = require("http")
-const SocketService = require("./services/socket")
+const http = require("http");
+const SocketService = require("./services/socket");
 
 async function init() {
+  const socketService = new SocketService();
 
-  const socketService = new SocketService()
+  const httpServer = http.createServer();
+  const PORT = process.env.PORT || 8000;
 
-  const httpServer = http.createServer()
-  const PORT = process.env.PORT || 8000
-
-  socketService.io.attach(httpServer)
+  socketService.io.attach(httpServer);
 
   httpServer.listen(PORT, () => {
-    console.log(`HTTP server started at PORT: ${PORT}`)
-  })
+    console.log(`HTTP server started at PORT: ${PORT}`);
+  });
 
-  socketService.initListener()
+  socketService.initListener();
 }
 
-init()
+init();
 
 // const express = require('express');
 // const mongoose = require('mongoose');
