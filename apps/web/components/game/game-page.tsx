@@ -425,7 +425,9 @@ export default function GamePage() {
         <div className="flex-1 flex flex-col">
           {/* Word to Guess */}
           <div className="bg-white/90 backdrop-blur-sm rounded-lg p-3 mb-2 flex flex-col items-center shadow-xl border border-white/20">
-            <div className="text-gray-700 font-bold mb-1">GUESS THIS</div>
+            <div className="text-gray-700 font-bold mb-1 max-md:hidden">
+              GUESS THIS
+            </div>
             <div className="text-2xl tracking-widest font-bold text-black">
               {currentWord}
             </div>
@@ -434,7 +436,7 @@ export default function GamePage() {
           {/* Game Area with Canvas and Chat */}
           <div className="flex-1 flex gap-2 max-md:flex-col">
             {/* Drawing Canvas */}
-            <div className="flex-1 max-md:min-h-[40vh] bg-white rounded-lg overflow-hidden relative shadow-xl border border-white/20">
+            <div className="flex-1 bg-white rounded-lg overflow-hidden relative shadow-xl border border-white/20">
               {/* Thumbs up/down */}
               <div className="absolute top-2 right-2 flex gap-2 z-10">
                 <button className="p-1 bg-green-100 rounded-full hover:bg-green-200 transition-colors">
