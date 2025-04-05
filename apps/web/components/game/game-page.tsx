@@ -40,7 +40,6 @@ export default function GamePage() {
   const [messages, setMessages] = useState<Message[]>(initialMessages);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const chatContainerRef = useRef<HTMLDivElement>(null);
-
   const brushSizes = [2, 5, 10, 15, 25, 35];
 
   // Timer effect
@@ -509,13 +508,19 @@ export default function GamePage() {
       </div>
 
       {/* Settings Button */}
-      <button className="absolute top-2 right-2 cursor-pointer bg-gray-800 text-white p-2 rounded-full hover:bg-gray-700 transition-colors z-20">
+      <button
+        onClick={() => setIsChooseWordModalOpen(true)}
+        className="absolute top-2 right-2 cursor-pointer bg-gray-800 text-white p-2 rounded-full hover:bg-gray-700 transition-colors z-20"
+      >
         <Settings className="w-6 h-6" />
       </button>
 
       {/* Choose Word Modal */}
       {isChooseWordModalOpen && (
-        <ChooseWordModal onClose={() => setIsChooseWordModalOpen(false)} />
+        <ChooseWordModal
+          isOpen={isChooseWordModalOpen}
+          onClose={() => setIsChooseWordModalOpen(false)}
+        />
       )}
     </div>
   );
