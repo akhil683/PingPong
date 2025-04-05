@@ -21,6 +21,8 @@ import ColorSelection from "../tools/color-selection";
 import BrushSelection from "../tools/brush-selection";
 import AnimatedBackground from "../animated-background";
 import { useSocket } from "../../lib/context/socket-context";
+import ChooseWordModal from "./modals/choose-word";
+import RoundPointsModal from "./modals/round-points-modal";
 
 export default function GamePage() {
   // Game state
@@ -29,6 +31,8 @@ export default function GamePage() {
   const [timeLeft, setTimeLeft] = useState(50);
   const [currentWord, setCurrentWord] = useState("__________");
   const [guessInput, setGuessInput] = useState("");
+  const [isChooseWordModalOpen, setIsChooseWordModalOpen] = useState(false);
+  const [isRoundPointsModalOpen, setIsRoundPointsModalOpen] = useState(false);
 
   // Drawing state
   const [currentTool, setCurrentTool] = useState<Tool>("pen");
@@ -38,7 +42,6 @@ export default function GamePage() {
   const [messages, setMessages] = useState<Message[]>(initialMessages);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const chatContainerRef = useRef<HTMLDivElement>(null);
-
   const brushSizes = [2, 5, 10, 15, 25, 35];
 
   // Timer effect
@@ -425,7 +428,9 @@ export default function GamePage() {
         <div className="flex-1 flex flex-col">
           {/* Word to Guess */}
           <div className="bg-white/90 backdrop-blur-sm rounded-lg p-3 mb-2 flex flex-col items-center shadow-xl border border-white/20">
-            <div className="text-gray-700 font-bold mb-1">GUESS THIS</div>
+            <div className="text-gray-700 font-bold mb-1 max-md:hidden">
+              GUESS THIS
+            </div>
             <div className="text-2xl tracking-widest font-bold text-black">
               {currentWord}
             </div>
@@ -434,7 +439,7 @@ export default function GamePage() {
           {/* Game Area with Canvas and Chat */}
           <div className="flex-1 flex gap-2 max-md:flex-col">
             {/* Drawing Canvas */}
-            <div className="flex-1 max-md:min-h-[40vh] bg-white rounded-lg overflow-hidden relative shadow-xl border border-white/20">
+            <div className="flex-1 bg-white rounded-lg overflow-hidden relative shadow-xl border border-white/20">
               {/* Thumbs up/down */}
               <div className="absolute top-2 right-2 flex gap-2 z-10">
                 <button className="p-1 bg-green-100 rounded-full hover:bg-green-200 transition-colors">
@@ -505,9 +510,26 @@ export default function GamePage() {
       </div>
 
       {/* Settings Button */}
-      <button className="absolute top-2 right-2 cursor-pointer bg-gray-800 text-white p-2 rounded-full hover:bg-gray-700 transition-colors z-20">
+      <button
+        onClick={() => setIsRoundPointsModalOpen(true)}
+        className="absolute top-2 right-2 cursor-pointer bg-gray-800 text-white p-2 rounded-full hover:bg-gray-700 transition-colors z-20"
+      >
         <Settings className="w-6 h-6" />
       </button>
+
+      {/* Choose Word Modal */}
+      {isChooseWordModalOpen && (
+        <ChooseWordModal
+          isOpen={isChooseWordModalOpen}
+          onClose={() => setIsChooseWordModalOpen(false)}
+        />
+      )}
+      {isRoundPointsModalOpen && (
+        <RoundPointsModal
+          isOpen={isRoundPointsModalOpen}
+          onClose={() => setIsRoundPointsModalOpen(false)}
+        />
+      )}
     </div>
   );
 }
