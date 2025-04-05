@@ -21,6 +21,7 @@ import ColorSelection from "../tools/color-selection";
 import BrushSelection from "../tools/brush-selection";
 import AnimatedBackground from "../animated-background";
 import { useSocket } from "../../lib/context/socket-context";
+import ChooseWordModal from "./modals/choose-word";
 
 export default function GamePage() {
   // Game state
@@ -29,6 +30,7 @@ export default function GamePage() {
   const [timeLeft, setTimeLeft] = useState(50);
   const [currentWord, setCurrentWord] = useState("__________");
   const [guessInput, setGuessInput] = useState("");
+  const [isChooseWordModalOpen, setIsChooseWordModalOpen] = useState(false);
 
   // Drawing state
   const [currentTool, setCurrentTool] = useState<Tool>("pen");
@@ -510,6 +512,11 @@ export default function GamePage() {
       <button className="absolute top-2 right-2 cursor-pointer bg-gray-800 text-white p-2 rounded-full hover:bg-gray-700 transition-colors z-20">
         <Settings className="w-6 h-6" />
       </button>
+
+      {/* Choose Word Modal */}
+      {isChooseWordModalOpen && (
+        <ChooseWordModal onClose={() => setIsChooseWordModalOpen(false)} />
+      )}
     </div>
   );
 }

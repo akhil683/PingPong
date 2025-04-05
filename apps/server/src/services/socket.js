@@ -31,11 +31,31 @@ class SocketService {
         console.log("new message received", message);
         await pub.publish("MESSAGES", JSON.stringify(message));
       });
+
+      // Join a room
+      socket.on("room:join", (room) => {
+        socket.join(room);
+        console.log(`Socket ${socket.id} joined room ${room}`);
+      });
+
+      // Leave a room
+      socket.on("room:leave", (room) => {
+        socket.leave(room);
+        console.log(`Socket ${socket.id} left room ${room}`);
+      });
+
+      // Send a message to a specific room
+      socket.on("event:message", async ({ room, message }) => {
+        console.log(`New message in room ${room}:`, message);
+        await pub.publish("MESSAGES", JSON.stringify({ room, message }));
+      });
     });
 
+    // Listen for Redis messages and emit only to specific rooms
     sub.on("message", (channel, message) => {
       if (channel === "MESSAGES") {
-        io.emit("message", JSON.parse(message));
+        const { room, message: msg } = JSON.parse(message);
+        io.to(room).emit("message", msg); // Send message only to users in the room
       }
     });
   }

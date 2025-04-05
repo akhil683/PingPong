@@ -5,7 +5,6 @@ import type React from "react";
 import { useState } from "react";
 import { Modal } from "../ui/Modal";
 import {
-  Link,
   Users,
   Clock,
   Repeat,
@@ -220,21 +219,21 @@ export function CreateRoomModal({ isOpen, onClose }: CreateRoomModalProps) {
             <label className="block text-sm font-ghibli text-green-700">
               Custom Words
             </label>
-            <div className="flex items-center">
-              <input
-                type="checkbox"
-                id="useCustomWordsOnly"
-                checked={useCustomWordsOnly}
-                onChange={(e) => setUseCustomWordsOnly(e.target.checked)}
-                className="h-4 w-4 rounded border-green-300 text-green-600 focus:ring-green-500"
-              />
-              <label
-                htmlFor="useCustomWordsOnly"
-                className="ml-2 text-sm font-ghibli text-green-700"
-              >
-                Use custom words only
-              </label>
-            </div>
+            {/* <div className="flex items-center"> */}
+            {/*   <input */}
+            {/*     type="checkbox" */}
+            {/*     id="useCustomWordsOnly" */}
+            {/*     checked={useCustomWordsOnly} */}
+            {/*     onChange={(e) => setUseCustomWordsOnly(e.target.checked)} */}
+            {/*     className="h-4 w-4 rounded border-green-300 text-green-600 focus:ring-green-500" */}
+            {/*   /> */}
+            {/*   <label */}
+            {/*     htmlFor="useCustomWordsOnly" */}
+            {/*     className="ml-2 text-sm font-ghibli text-green-700" */}
+            {/*   > */}
+            {/*     Use custom words only */}
+            {/*   </label> */}
+            {/* </div> */}
           </div>
           {/* <textarea */}
           {/*   value={customWords} */}
