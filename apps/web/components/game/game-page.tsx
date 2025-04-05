@@ -22,6 +22,7 @@ import BrushSelection from "../tools/brush-selection";
 import AnimatedBackground from "../animated-background";
 import { useSocket } from "../../lib/context/socket-context";
 import ChooseWordModal from "./modals/choose-word";
+import RoundPointsModal from "./modals/round-points-modal";
 
 export default function GamePage() {
   // Game state
@@ -31,6 +32,7 @@ export default function GamePage() {
   const [currentWord, setCurrentWord] = useState("__________");
   const [guessInput, setGuessInput] = useState("");
   const [isChooseWordModalOpen, setIsChooseWordModalOpen] = useState(false);
+  const [isRoundPointsModalOpen, setIsRoundPointsModalOpen] = useState(false);
 
   // Drawing state
   const [currentTool, setCurrentTool] = useState<Tool>("pen");
@@ -509,7 +511,7 @@ export default function GamePage() {
 
       {/* Settings Button */}
       <button
-        onClick={() => setIsChooseWordModalOpen(true)}
+        onClick={() => setIsRoundPointsModalOpen(true)}
         className="absolute top-2 right-2 cursor-pointer bg-gray-800 text-white p-2 rounded-full hover:bg-gray-700 transition-colors z-20"
       >
         <Settings className="w-6 h-6" />
@@ -520,6 +522,12 @@ export default function GamePage() {
         <ChooseWordModal
           isOpen={isChooseWordModalOpen}
           onClose={() => setIsChooseWordModalOpen(false)}
+        />
+      )}
+      {isRoundPointsModalOpen && (
+        <RoundPointsModal
+          isOpen={isRoundPointsModalOpen}
+          onClose={() => setIsRoundPointsModalOpen(false)}
         />
       )}
     </div>
