@@ -13,7 +13,7 @@ export default function SkribblClone() {
   const router = useRouter();
   const [isCreateRoomModalOpen, setIsCreateRoomModalOpen] = useState(false);
   const [selectedAvatar, setSelectedAvatar] = useState(0);
-  const [playerName, setPlayerName] = useState("");
+  const [gameCode, setGameCode] = useState("");
 
   const nextAvatar = () => {
     setSelectedAvatar((prev) => (prev + 1) % colors.length);
@@ -25,7 +25,7 @@ export default function SkribblClone() {
 
   const handlePlay = () => {
     // Navigate to the game page
-    router.push("/game/1");
+    router.push(`/game/${gameCode}`);
   };
 
   const colors = [
@@ -81,11 +81,11 @@ export default function SkribblClone() {
 
           <div className="flex gap-2 mb-6">
             <input
-              type="text"
-              placeholder="Enter your name"
+              type="number"
+              placeholder="Enter Game Code"
               className="flex-1 placeholder:text-gray-500 text-gray-800 px-4 py-3 rounded-full border border-green-200 focus:outline-none focus:ring-2 focus:ring-green-300 bg-white/80 font-ghibli text-lg"
-              value={playerName}
-              onChange={(e) => setPlayerName(e.target.value)}
+              value={gameCode}
+              onChange={(e) => setGameCode(e.target.value)}
             />
           </div>
 

@@ -29,7 +29,6 @@ export default function GamePage() {
   const [currentColor, setCurrentColor] = useState("#000000");
   const [brushSize, setBrushSize] = useState(5);
 
-  // const [messages, setMessages] = useState<Message[]>(initialMessages);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const brushSizes = [2, 5, 10, 15, 25, 35];
 

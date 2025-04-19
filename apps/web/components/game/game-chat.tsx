@@ -1,6 +1,7 @@
 import { Send } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { useSocket } from "../../lib/context/socket-context";
+import { colors } from "../../constants/GameTools";
 
 export default function GameChat() {
   const chatContainerRef = useRef<HTMLDivElement>(null);
@@ -16,6 +17,7 @@ export default function GameChat() {
   }, [messages]);
   const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault();
+    console.log(Math.floor(Math.random() * 8));
 
     if (!guessInput) return;
     sendMessage({
@@ -24,7 +26,7 @@ export default function GameChat() {
       player: "poing (You)",
       correctWord: "hi",
       content: guessInput,
-      color: "#ff4040",
+      color: colors[Math.floor(Math.random() * 8)],
     });
     setGuessInput("");
   };
