@@ -8,19 +8,11 @@ import Logo from "../logo";
 import GameLeaderboard from "./game-leaderboard";
 import GameChat from "./game-chat";
 
-import {
-  tools,
-  Tool,
-  initialMessages,
-  Message,
-  players,
-  colors,
-} from "../../constants/GameTools";
+import { tools, Tool, players, colors } from "../../constants/GameTools";
 import ToolSelection from "../tools/tool-selection";
 import ColorSelection from "../tools/color-selection";
 import BrushSelection from "../tools/brush-selection";
 import AnimatedBackground from "../animated-background";
-import { useSocket } from "../../lib/context/socket-context";
 import ChooseWordModal from "./modals/choose-word";
 import RoundPointsModal from "./modals/round-points-modal";
 
@@ -28,9 +20,7 @@ export default function GamePage() {
   // Game state
   const [currentRound, setCurrentRound] = useState(3);
   const [totalRounds, setTotalRounds] = useState(3);
-  const [timeLeft, setTimeLeft] = useState(50);
   const [currentWord, setCurrentWord] = useState("__________");
-  const [guessInput, setGuessInput] = useState("");
   const [isChooseWordModalOpen, setIsChooseWordModalOpen] = useState(false);
   const [isRoundPointsModalOpen, setIsRoundPointsModalOpen] = useState(false);
 
@@ -39,26 +29,9 @@ export default function GamePage() {
   const [currentColor, setCurrentColor] = useState("#000000");
   const [brushSize, setBrushSize] = useState(5);
 
-  const [messages, setMessages] = useState<Message[]>(initialMessages);
+  // const [messages, setMessages] = useState<Message[]>(initialMessages);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const chatContainerRef = useRef<HTMLDivElement>(null);
   const brushSizes = [2, 5, 10, 15, 25, 35];
-
-  // Timer effect
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setTimeLeft((prev) => (prev > 0 ? prev - 1 : 0));
-    }, 1000);
-    return () => clearInterval(timer);
-  }, []);
-
-  // Scroll chat to bottom when messages change
-  useEffect(() => {
-    if (chatContainerRef.current) {
-      chatContainerRef.current.scrollTop =
-        chatContainerRef.current.scrollHeight;
-    }
-  }, [messages]);
 
   // Canvas drawing functionality
   useEffect(() => {
@@ -376,36 +349,6 @@ export default function GamePage() {
     }
   };
 
-  // Send message handler
-  const { sendMessage } = useSocket();
-
-  const handleSendMessage = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!guessInput) return;
-    sendMessage({
-      type: "message",
-      currentPlayer: "you",
-      player: "poing (You)",
-      correctWord: "hi",
-      content: guessInput,
-      color: "#ff4040",
-    });
-    setMessages([
-      ...messages,
-      {
-        type: "message",
-        currentPlayer: "you",
-        player: "poing (You)",
-        correctWord: "hi",
-        content: guessInput,
-        color: "#ff4040",
-      },
-    ]);
-
-    setGuessInput("");
-  };
-
   return (
     <div className="min-h-screen flex flex-col">
       <AnimatedBackground />
@@ -418,7 +361,6 @@ export default function GamePage() {
       <div className="flex flex-1 px-4 pb-4 gap-4 relative z-10">
         {/* Left Sidebar - Player List */}
         <GameLeaderboard
-          timeLeft={timeLeft}
           totalRounds={totalRounds}
           currentRound={currentRound}
           players={players}
@@ -498,20 +440,14 @@ export default function GamePage() {
             </div>
 
             {/* Chat Container */}
-            <GameChat
-              chatContainerRef={chatContainerRef}
-              messages={messages}
-              guessInput={guessInput}
-              setGuessInput={setGuessInput}
-              handleSendMessage={handleSendMessage}
-            />
+            <GameChat />
           </div>
         </div>
       </div>
 
       {/* Settings Button */}
       <button
-        onClick={() => setIsRoundPointsModalOpen(true)}
+        onClick={() => setIsChooseWordModalOpen(true)}
         className="absolute top-2 right-2 cursor-pointer bg-gray-800 text-white p-2 rounded-full hover:bg-gray-700 transition-colors z-20"
       >
         <Settings className="w-6 h-6" />

@@ -1,19 +1,28 @@
+import { useEffect, useState } from "react";
 import { Player } from "../../constants/GameTools";
 import GhibliAvatar from "../ghibli-avatar";
 
 interface PropType {
-  timeLeft: number;
   currentRound: number;
   totalRounds: number;
   players: Player[];
 }
 
 export default function GameLeaderboard({
-  timeLeft,
   currentRound,
   totalRounds,
   players,
 }: PropType) {
+  const [timeLeft, setTimeLeft] = useState(50);
+
+  // Timer effect
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTimeLeft((prev) => (prev > 0 ? prev - 1 : 0));
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
+
   return (
     <div className="max-md:hidden w-64 bg-white/80 backdrop-blur-sm rounded-3xl overflow-hidden shadow-xl border border-green-100">
       <div className="flex items-center bg-green-100 p-3">

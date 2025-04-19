@@ -54,8 +54,9 @@ class SocketService {
     // Listen for Redis messages and emit only to specific rooms
     sub.on("message", (channel, message) => {
       if (channel === "MESSAGES") {
-        const { room, message: msg } = JSON.parse(message);
-        io.to(room).emit("message", msg); // Send message only to users in the room
+        io.emit("message", message);
+        // const { room, message: msg } = JSON.parse(message);
+        // io.to(room).emit("message", msg); // Send message only to users in the room
       }
     });
   }

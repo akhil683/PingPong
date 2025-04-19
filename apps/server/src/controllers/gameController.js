@@ -1,12 +1,38 @@
-const Game = require('../models/Game');
-const User = require('../models/User');
-const Drawing = require('../models/Drawing');
-const crypto = require('crypto');
+const Game = require("../models/Game");
+const User = require("../models/User");
+const Drawing = require("../models/Drawing");
+const crypto = require("crypto");
+import config from "../config/environment";
+
+const aiClient = new GoogleGenAI({ apiKey: config.gemini_api_key });
 
 class GameController {
   // Generate unique game code
   static generateGameCode() {
-    return crypto.randomBytes(3).toString('hex').toUpperCase();
+    return crypto.randomBytes(3).toString("hex").toUpperCase();
+  }
+
+  static async generateWords(req, res) {
+    try {
+      const { prompt } = req.body;
+
+      // Validate the input
+      if (!prompt) {
+        return res.status(400).json({ error: "Prompt is required" });
+      }
+
+      // Make a request to Gemini API
+      const response = await aiClient.models.generateContent({
+        model: "gemini-2.0-flash",
+        contents: prompt,
+      });
+
+      // Send the response back to the user
+      res.json({ response: response.text });
+    } catch (error) {
+      console.error("Error communicating with Gemini API:", error.message);
+      res.status(500).json({ error: "Failed to generate response" });
+    }
   }
 
   // Create a new game
@@ -22,13 +48,15 @@ class GameController {
       const game = new Game({
         code: gameCode,
         host: user.id,
-        players: [{
-          user: user.id,
-          score: 0,
-          isDrawing: false
-        }],
+        players: [
+          {
+            user: user.id,
+            score: 0,
+            isDrawing: false,
+          },
+        ],
         rounds: rounds || 3,
-        timeLimit: timeLimit || 60
+        timeLimit: timeLimit || 60,
       });
 
       await game.save();
@@ -36,12 +64,12 @@ class GameController {
       res.status(201).json({
         gameCode: game.code,
         rounds: game.rounds,
-        timeLimit: game.timeLimit
+        timeLimit: game.timeLimit,
       });
     } catch (error) {
       res.status(500).json({
-        message: 'Game creation failed',
-        error: error.message
+        message: "Game creation failed",
+        error: error.message,
       });
     }
   }
@@ -53,42 +81,44 @@ class GameController {
       const user = req.user;
 
       // Find the game
-      const game = await Game.findOne({ code: gameCode })
-        .populate('players.user', 'username');
+      const game = await Game.findOne({ code: gameCode }).populate(
+        "players.user",
+        "username",
+      );
 
       if (!game) {
         return res.status(404).json({
-          message: 'Game not found'
+          message: "Game not found",
         });
       }
 
       // Check if game is full or already started
       if (game.players.length >= 8) {
         return res.status(400).json({
-          message: 'Game is full'
+          message: "Game is full",
         });
       }
 
-      if (game.status !== 'WAITING') {
+      if (game.status !== "WAITING") {
         return res.status(400).json({
-          message: 'Game has already started'
+          message: "Game has already started",
         });
       }
 
       // Check if user is already in the game
       const existingPlayer = game.players.find(
-        p => p.user._id.toString() === user.id
+        (p) => p.user._id.toString() === user.id,
       );
 
       if (existingPlayer) {
         return res.status(200).json({
-          message: 'Already in game',
+          message: "Already in game",
           game: {
             code: game.code,
             players: game.players,
             rounds: game.rounds,
-            timeLimit: game.timeLimit
-          }
+            timeLimit: game.timeLimit,
+          },
         });
       }
 
@@ -96,7 +126,7 @@ class GameController {
       game.players.push({
         user: user.id,
         score: 0,
-        isDrawing: false
+        isDrawing: false,
       });
 
       await game.save();
@@ -105,12 +135,12 @@ class GameController {
         gameCode: game.code,
         players: game.players,
         rounds: game.rounds,
-        timeLimit: game.timeLimit
+        timeLimit: game.timeLimit,
       });
     } catch (error) {
       res.status(500).json({
-        message: 'Join game failed',
-        error: error.message
+        message: "Join game failed",
+        error: error.message,
       });
     }
   }
@@ -121,12 +151,12 @@ class GameController {
       const { gameCode } = req.params;
 
       const game = await Game.findOne({ code: gameCode })
-        .populate('players.user', 'username')
-        .populate('host', 'username');
+        .populate("players.user", "username")
+        .populate("host", "username");
 
       if (!game) {
         return res.status(404).json({
-          message: 'Game not found'
+          message: "Game not found",
         });
       }
 
@@ -137,12 +167,12 @@ class GameController {
         currentRound: game.currentRound,
         totalRounds: game.rounds,
         timeLimit: game.timeLimit,
-        host: game.host
+        host: game.host,
       });
     } catch (error) {
       res.status(500).json({
-        message: 'Failed to retrieve game details',
-        error: error.message
+        message: "Failed to retrieve game details",
+        error: error.message,
       });
     }
   }
@@ -157,26 +187,26 @@ class GameController {
 
       if (!game) {
         return res.status(404).json({
-          message: 'Game not found'
+          message: "Game not found",
         });
       }
 
       // Verify the user is the host
       if (game.host.toString() !== user.id) {
         return res.status(403).json({
-          message: 'Only the host can start the game'
+          message: "Only the host can start the game",
         });
       }
 
       // Check minimum players
       if (game.players.length < 2) {
         return res.status(400).json({
-          message: 'At least 2 players required to start'
+          message: "At least 2 players required to start",
         });
       }
 
       // Update game status
-      game.status = 'IN_PROGRESS';
+      game.status = "IN_PROGRESS";
       game.currentRound = 1;
 
       // Select first drawer
@@ -185,14 +215,14 @@ class GameController {
       await game.save();
 
       res.json({
-        message: 'Game started',
+        message: "Game started",
         status: game.status,
-        currentRound: game.currentRound
+        currentRound: game.currentRound,
       });
     } catch (error) {
       res.status(500).json({
-        message: 'Failed to start game',
-        error: error.message
+        message: "Failed to start game",
+        error: error.message,
       });
     }
   }
@@ -208,14 +238,14 @@ class GameController {
 
       if (!game) {
         return res.status(404).json({
-          message: 'Game not found'
+          message: "Game not found",
         });
       }
 
       // Validate game state
-      if (game.status !== 'IN_PROGRESS') {
+      if (game.status !== "IN_PROGRESS") {
         return res.status(400).json({
-          message: 'Game is not in progress'
+          message: "Game is not in progress",
         });
       }
 
@@ -225,7 +255,7 @@ class GameController {
       if (isCorrect) {
         // Find the player and update their score
         const playerIndex = game.players.findIndex(
-          p => p.user.toString() === user.id
+          (p) => p.user.toString() === user.id,
         );
 
         if (playerIndex !== -1) {
@@ -240,12 +270,12 @@ class GameController {
 
       res.json({
         isCorrect,
-        message: isCorrect ? 'Correct guess!' : 'Incorrect guess'
+        message: isCorrect ? "Correct guess!" : "Incorrect guess",
       });
     } catch (error) {
       res.status(500).json({
-        message: 'Failed to submit guess',
-        error: error.message
+        message: "Failed to submit guess",
+        error: error.message,
       });
     }
   }
