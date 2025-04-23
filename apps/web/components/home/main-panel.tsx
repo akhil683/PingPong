@@ -59,7 +59,6 @@ export default function MainPanel() {
               className="opacity-30"
             />
           </div>
-
           <div className="flex gap-2 mb-6">
             <input
               type="text"
@@ -69,7 +68,6 @@ export default function MainPanel() {
               onChange={(e) => setUsername(e.target.value)}
             />
           </div>
-
           <div className="flex gap-2 mb-6">
             <input
               type="number"
@@ -79,6 +77,7 @@ export default function MainPanel() {
               onChange={(e) => setRoomId(e.target.value)}
             />
           </div>
+          {error && <p className="text-red-500">{error}</p>}
 
           {/* Avatar Selection */}
           <div className="flex items-center justify-center my-8">
@@ -97,7 +96,6 @@ export default function MainPanel() {
               onClick={nextAvatar}
               className="bg-green-100 text-green-700 p-2 rounded-full ml-2 hover:bg-green-200 transition-colors"
             >
-              {" "}
               <ChevronRight size={24} />
             </button>
           </div>
@@ -109,7 +107,6 @@ export default function MainPanel() {
           >
             Play!
           </button>
-
           <button
             className="w-full bg-blue-400 hover:bg-blue-500 text-white font-ghibli py-4 px-6 rounded-full text-xl transition-colors shadow-md hover:shadow-lg transform hover:-translate-y-1 active:translate-y-0 duration-200"
             onClick={() => setIsCreateRoomModalOpen(true)}
