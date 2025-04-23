@@ -15,6 +15,7 @@ import BrushSelection from "../tools/brush-selection";
 import AnimatedBackground from "../animated-background";
 import ChooseWordModal from "./modals/choose-word";
 import RoundPointsModal from "./modals/round-points-modal";
+import ChatBox from "../Chat/chat-box";
 
 export default function GamePage() {
   // Game state
@@ -439,7 +440,8 @@ export default function GamePage() {
             </div>
 
             {/* Chat Container */}
-            <GameChat />
+            {/* <GameChat /> */}
+            <ChatBox />
           </div>
         </div>
       </div>

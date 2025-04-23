@@ -1,115 +1,169 @@
-import React, { useContext, useState, useEffect } from "react";
-import socketService from "../utils/socket-service";
-import { Message, Player, Room } from "../../type";
-import env from "../../config/env";
+"use client";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from "react";
+import io, { Socket } from "socket.io-client";
+import { Player, RoomState, Message, GameSettings } from "../../type";
+
+interface GameContextProps {
+  socket: Socket | null;
+  connected: boolean;
+  player: Player | null;
+  room: RoomState | null;
+  messages: Message[];
+  currentWord: string;
+  isDrawer: boolean;
+  startGame: () => void;
+  updateSettings: (settings: GameSettings) => void;
+  sendMessage: (message: string) => void;
+  leaveRoom: () => void;
+}
+
+const GameContext = createContext<GameContextProps | null>(null);
 
 interface GameProviderProps {
-  children?: React.ReactNode;
+  children: ReactNode;
   roomId: string;
 }
 
-interface IGameContext {
-  connected: boolean;
-  player: Player | null;
-  room: Room | null;
-  messages: Message[];
-  currentWord: string;
-  timerValue: number;
-  isDrawer: boolean;
-  gameActions: {
-    startGame: () => void;
-    updateSettings: (settings: any) => void;
-    sendMessage: (message: string) => void;
-    leaveRoom: () => void;
-  };
-}
-
-const GameContext = React.createContext<IGameContext | null>(null);
-
-export function GameProvider({ children, roomId }: GameProviderProps) {
+export const GameProvider: React.FC<GameProviderProps> = ({
+  children,
+  roomId,
+}) => {
+  const [socket, setSocket] = useState<Socket | null>(null);
   const [connected, setConnected] = useState<boolean>(false);
   const [player, setPlayer] = useState<Player | null>(null);
-  const [room, setRoom] = useState<Room | null>(null);
+  const [room, setRoom] = useState<RoomState | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
-  const [currentWord, setCurrentWord] = useState("");
-  const [timerValue, setTimerValue] = useState(0);
-  const [isDrawer, setIsDrawer] = useState(false);
+  const [currentWord, setCurrentWord] = useState<string>("");
+  const [isDrawer, setIsDrawer] = useState<boolean>(false);
 
+  // Initialize socket connection when component mounts
   useEffect(() => {
     if (!roomId) return;
 
     const username = localStorage.getItem("username") || "Guest";
+    const avatar = localStorage.getItem("avatar");
+
     const playerId =
       localStorage.getItem("playerId") ||
       `player_${Math.random().toString(36).substring(2, 9)}`;
     localStorage.setItem("playerId", playerId);
 
-    const playerObj = {
+    const playerObj: Player = {
       id: playerId,
-      username,
-      avatar: `https://api.dicebear.com/6.x/adventurer/svg?seed=${username}`,
+      username: username,
+      avatar: avatar as string,
     };
 
     setPlayer(playerObj);
-  }, [roomId]);
 
-  useEffect(() => {
-    if (!player || !roomId) return;
+    // Initialize socket
+    const socketUrl =
+      process.env.NEXT_PUBLIC_SOCKET_URL || "http://localhost:3001";
+    const socketInstance = io(socketUrl);
+    setSocket(socketInstance);
 
-    const socketUrl = env.NEXT_PUBLIC_SOCKET_URL;
-    socketService.connect(socketUrl);
-
-    socketService.on("connect", () => {
+    // Socket connection event handlers
+    socketInstance.on("connect", () => {
+      console.log("Socket connected");
       setConnected(true);
-      socketService.joinRoom(roomId, player);
+
+      // Join room
+      socketInstance.emit("room:join", { roomId, player: playerObj });
     });
 
-    socketService.on("disconnect", () => {
+    socketInstance.on("disconnect", () => {
+      console.log("Socket disconnected");
       setConnected(false);
     });
 
-    socketService.on("room:state", (roomState) => {
+    // Room state event handler
+    socketInstance.on("room:state", (roomState: RoomState) => {
+      console.log("Room state received:", roomState);
       setRoom(roomState);
-      setTimerValue(roomState.timeRemaining);
-      setIsDrawer(roomState.currentDrawer === player.id);
+
+      // Check if this player is the drawer
+      if (roomState.currentDrawer === playerObj.id) {
+        setIsDrawer(true);
+      } else {
+        setIsDrawer(false);
+      }
     });
 
-    socketService.on("room:playerJoined", ({ player, players, hostId }) => {
-      setRoom((prev) => (prev ? { ...prev, players, hostId } : null));
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: String(Date.now()),
+    // Player join/leave events
+    socketInstance.on(
+      "room:playerJoined",
+      ({
+        player,
+        players,
+        hostId,
+      }: {
+        player: Player;
+        players: Player[];
+        hostId: string;
+      }) => {
+        setRoom((prev) => (prev ? { ...prev, players, hostId } : null));
+
+        // Add system message for player joining
+        const joinMessage: Message = {
+          id: Date.now(),
           playerId: "system",
           playerName: "System",
           message: `${player.username} joined the room`,
           isSystem: true,
-        },
-      ]);
-    });
+        };
+        setMessages((prev) => [...prev, joinMessage]);
+      },
+    );
 
-    socketService.on("room:playerLeft", ({ playerId, players, hostId }) => {
-      setRoom((prev) => {
-        if (!prev) return null;
+    socketInstance.on(
+      "room:playerLeft",
+      ({
+        playerId,
+        players,
+        hostId,
+      }: {
+        playerId: string;
+        players: Player[];
+        hostId: string;
+      }) => {
+        setRoom((prev) => (prev ? { ...prev, players, hostId } : null));
+
+        // Find player who left
         const playerName =
-          prev.players.find((p) => p.id === playerId)?.username || "Someone";
-        setMessages((prevMsgs) => [
-          ...prevMsgs,
-          {
-            id: String(Date.now()),
-            playerId: "system",
-            playerName: "System",
-            message: `${playerName} left the room`,
-            isSystem: true,
-          },
-        ]);
-        return { ...prev, players, hostId };
-      });
-    });
+          room?.players.find((p) => p.id === playerId)?.username || "Someone";
 
-    socketService.on(
+        // Add system message for player leaving
+        const leaveMessage: Message = {
+          id: Date.now(),
+          playerId: "system",
+          playerName: "System",
+          message: `${playerName} left the room`,
+          isSystem: true,
+        };
+        setMessages((prev) => [...prev, leaveMessage]);
+      },
+    );
+
+    // Game events
+    socketInstance.on(
       "game:roundStart",
-      ({ round, totalRounds, drawer, timePerRound }) => {
+      ({
+        round,
+        totalRounds,
+        drawer,
+        timePerRound,
+      }: {
+        round: number;
+        totalRounds: number;
+        drawer: string;
+        timePerRound: number;
+      }) => {
         setRoom((prev) =>
           prev
             ? {
@@ -121,95 +175,124 @@ export function GameProvider({ children, roomId }: GameProviderProps) {
               }
             : null,
         );
-        setTimerValue(timePerRound);
-        setIsDrawer(drawer === player.id);
-        setCurrentWord("");
-        setMessages((prev) => [
-          ...prev,
-          {
-            id: String(Date.now()),
-            playerId: "system",
-            playerName: "System",
-            message: `Round ${round} of ${totalRounds} started!`,
-            isSystem: true,
-          },
-        ]);
+
+        setIsDrawer(drawer === playerObj.id);
+        setCurrentWord(""); // Reset current word
+
+        // Add system message for round start
+        const roundStartMessage: Message = {
+          id: Date.now(),
+          playerId: "system",
+          playerName: "System",
+          message: `Round ${round} of ${totalRounds} started!`,
+          isSystem: true,
+        };
+        setMessages((prev) => [...prev, roundStartMessage]);
       },
     );
 
-    socketService.on("game:word", ({ word }) => {
+    socketInstance.on("game:word", ({ word }: { word: string }) => {
       setCurrentWord(word);
     });
 
-    socketService.on("game:timerUpdate", ({ time }) => {
-      setTimerValue(time);
+    socketInstance.on("game:timerUpdate", ({ time }: { time: number }) => {
+      setRoom((prev) => (prev ? { ...prev, timeRemaining: time } : null));
     });
 
-    socketService.on("game:correctGuess", ({ playerId, points }) => {
-      setRoom((prev) => {
-        if (!prev) return null;
-        const newScores = { ...prev.scores };
-        newScores[playerId] = (newScores[playerId] || 0) + points;
-        if (prev.currentDrawer) {
-          newScores[prev.currentDrawer] =
-            (newScores[prev.currentDrawer] || 0) + 25;
-        }
-        return {
-          ...prev,
-          scores: newScores,
-        };
-      });
-    });
+    socketInstance.on(
+      "game:correctGuess",
+      ({ playerId, points }: { playerId: string; points: number }) => {
+        const playerName =
+          room?.players.find((p) => p.id === playerId)?.username || "Someone";
 
-    socketService.on("game:roundEnd", ({ word, scores }) => {
-      setRoom((prev) =>
-        prev
-          ? {
-              ...prev,
-              gameState: "roundEnd",
-              scores,
-            }
-          : null,
-      );
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: String(Date.now()),
+        // Update room scores
+        setRoom((prev) => {
+          if (!prev) return null;
+
+          const newScores = { ...prev.scores };
+          // Add points to guesser
+          newScores[playerId] = (newScores[playerId] || 0) + points;
+          // Add points to drawer
+          if (prev.currentDrawer) {
+            newScores[prev.currentDrawer] =
+              (newScores[prev.currentDrawer] || 0) + 25;
+          }
+
+          return {
+            ...prev,
+            scores: newScores,
+          };
+        });
+      },
+    );
+
+    socketInstance.on(
+      "game:roundEnd",
+      ({
+        word,
+        correctGuessers,
+        scores,
+      }: {
+        word: string;
+        correctGuessers: string[];
+        scores: Record<string, number>;
+      }) => {
+        setRoom((prev) =>
+          prev
+            ? {
+                ...prev,
+                gameState: "roundEnd",
+                scores,
+              }
+            : null,
+        );
+
+        // Add system message for round end
+        const roundEndMessage: Message = {
+          id: Date.now(),
           playerId: "system",
           playerName: "System",
           message: `Round ended! The word was: ${word}`,
           isSystem: true,
-        },
-      ]);
-    });
+        };
+        setMessages((prev) => [...prev, roundEndMessage]);
+      },
+    );
 
-    socketService.on("game:end", ({ rankings, scores }) => {
-      setRoom((prev) =>
-        prev
-          ? {
-              ...prev,
-              gameState: "gameEnd",
-              scores,
-            }
-          : null,
-      );
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: String(Date.now()),
+    socketInstance.on(
+      "game:end",
+      ({
+        rankings,
+        scores,
+      }: {
+        rankings: Array<{ username: string; score: number }>;
+        scores: Record<string, number>;
+      }) => {
+        setRoom((prev) =>
+          prev
+            ? {
+                ...prev,
+                gameState: "gameEnd",
+                scores,
+              }
+            : null,
+        );
+
+        // Add system message for game end
+        const gameEndMessage: Message = {
+          id: Date.now(),
           playerId: "system",
           playerName: "System",
-          message: `Game ended! ${
-            rankings[0]?.username || "Someone"
-          } won with ${rankings[0]?.score || 0} points!`,
+          message: `Game ended! ${rankings[0]?.username || "Someone"} won with ${rankings[0]?.score || 0} points!`,
           isSystem: true,
-        },
-      ]);
-    });
+        };
+        setMessages((prev) => [...prev, gameEndMessage]);
+      },
+    );
 
-    socketService.on(
+    socketInstance.on(
       "game:settingsUpdated",
-      ({ totalRounds, timePerRound }) => {
+      ({ totalRounds, timePerRound }: GameSettings) => {
         setRoom((prev) =>
           prev
             ? {
@@ -219,75 +302,101 @@ export function GameProvider({ children, roomId }: GameProviderProps) {
               }
             : null,
         );
-        setMessages((prev) => [
-          ...prev,
-          {
-            id: String(Date.now()),
-            playerId: "system",
-            playerName: "System",
-            message: `Game settings updated: ${totalRounds} rounds, ${timePerRound} seconds per round`,
-            isSystem: true,
-          },
-        ]);
+
+        // Add system message for settings update
+        const settingsMessage: Message = {
+          id: Date.now(),
+          playerId: "system",
+          playerName: "System",
+          message: `Game settings updated: ${totalRounds} rounds, ${timePerRound} seconds per round`,
+          isSystem: true,
+        };
+        setMessages((prev) => [...prev, settingsMessage]);
       },
     );
 
-    socketService.on("chat:message", (message) => {
+    // Chat messages
+    socketInstance.on("chat:message", (message: Message) => {
       setMessages((prev) => [...prev, message]);
     });
 
+    // Cleanup function
     return () => {
-      socketService.leaveRoom();
-      socketService.disconnect();
+      if (socketInstance) {
+        socketInstance.emit("room:leave");
+        socketInstance.disconnect();
+      }
     };
-  }, [player, roomId]);
+  }, [roomId]);
 
+  // Handle user leaving the page
   useEffect(() => {
     const handleBeforeUnload = () => {
-      socketService.leaveRoom();
+      if (socket) {
+        socket.emit("room:leave");
+      }
     };
 
     window.addEventListener("beforeunload", handleBeforeUnload);
     return () => {
       window.removeEventListener("beforeunload", handleBeforeUnload);
     };
-  }, []);
+  }, [socket]);
 
-  const gameActions = {
-    startGame: () => {
-      if (room && player && room.hostId === player.id) {
-        socketService.startGame();
-      }
-    },
-    updateSettings: (settings: any) => {
-      if (room && player && room.hostId === player.id) {
-        socketService.updateGameSettings(settings);
-      }
-    },
-    sendMessage: (message: string) => {
-      if (message.trim()) {
-        socketService.sendChatMessage(message);
-      }
-    },
-    leaveRoom: () => {
-      socketService.leaveRoom();
-    },
+  // Start game function (for host)
+  const startGame = () => {
+    if (socket && room && player && room.hostId === player.id) {
+      socket.emit("game:start");
+    }
   };
 
-  const value: IGameContext = {
-    connected,
-    player,
-    room,
-    messages,
-    currentWord,
-    timerValue,
-    isDrawer,
-    gameActions,
+  // Update game settings (for host)
+  const updateSettings = (settings: GameSettings) => {
+    if (socket && room && player && room.hostId === player.id) {
+      socket.emit("game:updateSettings", settings);
+    }
   };
 
-  return <GameContext.Provider value={value}>{children}</GameContext.Provider>;
-}
+  // Send chat message
+  const sendMessage = (message: string) => {
+    if (socket && message.trim()) {
+      socket.emit("chat:message", { message });
+    }
+  };
 
-export function useGame() {
-  return useContext(GameContext);
-}
+  // Leave room
+  const leaveRoom = () => {
+    if (socket) {
+      socket.emit("room:leave");
+      window.location.href = "/";
+    }
+  };
+
+  return (
+    <GameContext.Provider
+      value={{
+        socket,
+        connected,
+        player,
+        room,
+        messages,
+        currentWord,
+        isDrawer,
+        startGame,
+        updateSettings,
+        sendMessage,
+        leaveRoom,
+      }}
+    >
+      {children}
+    </GameContext.Provider>
+  );
+};
+
+export const useGameContext = () => {
+  const context = useContext(GameContext);
+  if (!context) {
+    throw new Error("useGameContext must be used within a GameProvider");
+  }
+  return context;
+};

@@ -1,8 +1,16 @@
-import GamePage from "../../../components/game/game-page"
+import GamePage from "../../../components/game/game-page";
+import { GameProvider } from "../../../lib/context/game-context";
 
-export default function Game() {
+export default async function Game({
+  params,
+}: {
+  params: Promise<{ gameId: string }>;
+}) {
+  const { gameId } = await params;
+
   return (
-    <GamePage />
-  )
+    <GameProvider roomId={gameId as string}>
+      <GamePage />
+    </GameProvider>
+  );
 }
-
