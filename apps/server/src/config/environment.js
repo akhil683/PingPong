@@ -5,6 +5,7 @@ const config = {
   mongoURI: process.env.MONGO_URI,
   jwtSecret: process.env.JWT_SECRET,
   environment: process.env.NODE_ENV || "development",
+  gemini_api_key: process.env.GEMINI_API_KEY,
 
   redis: {
     USERNAME: process.env.REDIS_USERNAME,

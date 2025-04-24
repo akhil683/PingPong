@@ -3,6 +3,7 @@ import { Patrick_Hand } from "next/font/google";
 import { SocketProvider } from "../lib/context/socket-context";
 
 import "./globals.css";
+import { ReactScan } from "../lib/utils/react-scan";
 
 const geistSans = Patrick_Hand({
   subsets: ["latin"],
@@ -21,6 +22,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <ReactScan />
       <SocketProvider>
         <body className={`${geistSans.className} antialiased`}>{children}</body>
       </SocketProvider>

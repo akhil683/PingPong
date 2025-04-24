@@ -214,35 +214,35 @@ export function CreateRoomModal({ isOpen, onClose }: CreateRoomModalProps) {
         </div>
 
         {/* Custom Words */}
-        <div className="space-y-2">
-          <div className="flex items-center justify-between">
-            <label className="block text-sm font-ghibli text-green-700">
-              Custom Words
-            </label>
-            {/* <div className="flex items-center"> */}
-            {/*   <input */}
-            {/*     type="checkbox" */}
-            {/*     id="useCustomWordsOnly" */}
-            {/*     checked={useCustomWordsOnly} */}
-            {/*     onChange={(e) => setUseCustomWordsOnly(e.target.checked)} */}
-            {/*     className="h-4 w-4 rounded border-green-300 text-green-600 focus:ring-green-500" */}
-            {/*   /> */}
-            {/*   <label */}
-            {/*     htmlFor="useCustomWordsOnly" */}
-            {/*     className="ml-2 text-sm font-ghibli text-green-700" */}
-            {/*   > */}
-            {/*     Use custom words only */}
-            {/*   </label> */}
-            {/* </div> */}
-          </div>
-          {/* <textarea */}
-          {/*   value={customWords} */}
-          {/*   onChange={(e) => setCustomWords(e.target.value)} */}
-          {/*   placeholder="Minimum of 10 words. 1-32 characters per word! 20000 characters maximum. Separated by a , (comma)" */}
-          {/*   className="w-full rounded-xl border border-green-200 bg-white/80 p-3 font-ghibli text-sm focus:border-green-300 focus:outline-none focus:ring-2 focus:ring-green-300 placeholder:text-green-600 text-green-800" */}
-          {/*   rows={6} */}
-          {/* /> */}
-        </div>
+        {/* <div className="space-y-2"> */}
+        {/* <div className="flex items-center justify-between"> */}
+        {/* <label className="block text-sm font-ghibli text-green-700"> */}
+        {/*   Custom Words */}
+        {/* </label> */}
+        {/* <div className="flex items-center"> */}
+        {/*   <input */}
+        {/*     type="checkbox" */}
+        {/*     id="useCustomWordsOnly" */}
+        {/*     checked={useCustomWordsOnly} */}
+        {/*     onChange={(e) => setUseCustomWordsOnly(e.target.checked)} */}
+        {/*     className="h-4 w-4 rounded border-green-300 text-green-600 focus:ring-green-500" */}
+        {/*   /> */}
+        {/*   <label */}
+        {/*     htmlFor="useCustomWordsOnly" */}
+        {/*     className="ml-2 text-sm font-ghibli text-green-700" */}
+        {/*   > */}
+        {/*     Use custom words only */}
+        {/*   </label> */}
+        {/* </div> */}
+        {/* </div> */}
+        {/* <textarea */}
+        {/*   value={customWords} */}
+        {/*   onChange={(e) => setCustomWords(e.target.value)} */}
+        {/*   placeholder="Minimum of 10 words. 1-32 characters per word! 20000 characters maximum. Separated by a , (comma)" */}
+        {/*   className="w-full rounded-xl border border-green-200 bg-white/80 p-3 font-ghibli text-sm focus:border-green-300 focus:outline-none focus:ring-2 focus:ring-green-300 placeholder:text-green-600 text-green-800" */}
+        {/*   rows={6} */}
+        {/* /> */}
+        {/* </div> */}
 
         {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row gap-3 pt-2">

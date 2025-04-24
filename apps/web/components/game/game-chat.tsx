@@ -1,22 +1,36 @@
 import { Send } from "lucide-react";
-import { Ref } from "react";
-import { Message } from "../../constants/GameTools";
+import { useState, useEffect, useRef } from "react";
+import { useSocket } from "../../lib/context/socket-context";
+import { colors } from "../../constants/GameTools";
 
-interface PropType {
-  chatContainerRef: Ref<HTMLDivElement>;
-  messages: Message[];
-  handleSendMessage: (e: React.FormEvent) => void;
-  guessInput: string;
-  setGuessInput: (guessInput: string) => void;
-}
+export default function GameChat() {
+  const chatContainerRef = useRef<HTMLDivElement>(null);
+  const [guessInput, setGuessInput] = useState("");
+  const { sendMessage, messages } = useSocket();
 
-export default function GameChat({
-  chatContainerRef,
-  messages,
-  handleSendMessage,
-  guessInput,
-  setGuessInput,
-}: PropType) {
+  // Scroll chat to bottom when messages change
+  useEffect(() => {
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTop =
+        chatContainerRef.current.scrollHeight;
+    }
+  }, [messages]);
+  const handleSendMessage = (e: React.FormEvent) => {
+    e.preventDefault();
+    console.log(Math.floor(Math.random() * 8));
+
+    if (!guessInput) return;
+    sendMessage({
+      type: "message",
+      currentPlayer: "you",
+      player: "poing (You)",
+      correctWord: "hi",
+      content: guessInput,
+      color: colors[Math.floor(Math.random() * 8)],
+    });
+    setGuessInput("");
+  };
+
   return (
     <div className="h-64 md:h-full md:w-64 bg-white/80 backdrop-blur-sm rounded-3xl overflow-hidden shadow-xl border border-pink-100 flex flex-col">
       {/* Chat Messages */}

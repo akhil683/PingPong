@@ -125,6 +125,17 @@ export const colors: string[] = [
   "#44aaaa",
 ];
 
+export const AvatarColors = [
+  "#ff9d8a",
+  "#ffbe7d",
+  "#ffe699",
+  "#b3e6b3",
+  "#a6d9f7",
+  "#c7b3e6",
+  "#f7c7e6",
+  "#f7a6c7",
+];
+
 export const tools = [
   {
     id: "pen" as Tool,

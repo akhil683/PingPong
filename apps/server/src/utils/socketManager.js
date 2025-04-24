@@ -1,7 +1,6 @@
 const socketIo = require("socket.io");
 const Game = require("../models/Game");
 const User = require("../models/User");
-const Drawing = require("../models/Drawing");
 
 class SocketManager {
   constructor(server) {
