@@ -35,7 +35,7 @@ const MessageInput: React.FC<MessageInputProps> = ({
           onChange={(e) => setMessage(e.target.value)}
           disabled={disabled}
           placeholder={placeholderText}
-          className="flex-1 placeholder:text-gray-400 text-gray-700 p-2 rounded-full border border-pink-200 focus:outline-none focus:ring-2 focus:ring-pink-300 font-ghibli text-sm"
+          className="flex-1 w-full placeholder:text-gray-400 text-gray-700 p-2 rounded-full border border-pink-200 focus:outline-none focus:ring-2 focus:ring-pink-300 font-ghibli text-sm"
         />
         <button
           type="submit"

@@ -19,7 +19,7 @@ const MessageList: React.FC<MessageListProps> = ({
   }, [messages]);
 
   return (
-    <div className="overflow-y-scroll p-2 w-full space-y-2 absolute bottom-0 h-full">
+    <div className="flex-1 overflow-y-auto p-3 space-y-2">
       {messages.map((message) => (
         <MessageItem
           key={message.id}

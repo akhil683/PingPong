@@ -7,7 +7,7 @@ export default async function Game({
   params: Promise<{ gameId: string }>;
 }) {
   const { gameId } = await params;
-
+  console.log(gameId);
   return (
     <GameProvider roomId={gameId as string}>
       <GamePage />

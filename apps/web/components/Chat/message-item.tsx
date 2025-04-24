@@ -11,7 +11,7 @@ const MessageItem: React.FC<MessageItemProps> = ({
 }) => {
   const getMessageClass = () => {
     if (message.isSystem) {
-      return "bg-gray-200 text-gray-700";
+      return "bg-blue-500 text-white";
     } else if (message.playerId === currentPlayerId) {
       return "bg-blue-100 text-blue-800";
     } else if (message.isCorrectGuess) {
@@ -24,14 +24,15 @@ const MessageItem: React.FC<MessageItemProps> = ({
   return (
     <div className={`flex-1 p-2 rounded font-ghibli ${getMessageClass()}`}>
       <div className="flex items-center space-x-1">
-        <span className="font-bold mr-1">{message.playerName}:</span>
-        {message.isSystem && (
-          <span className="text-xs bg-gray-400 text-white px-1 rounded">
-            SYSTEM
-          </span>
+        {message.isSystem ? (
+          <p className="text-sm w-full px-1 rounded text-center">
+            {message.message}
+          </p>
+        ) : (
+          <span className="font-bold mr-1">{message.playerName}:</span>
         )}
       </div>
-      <p className="text-gray-800">{message.message}</p>
+      {!message.isSystem && <p className="text-gray-800">{message.message}</p>}
     </div>
   );
 };

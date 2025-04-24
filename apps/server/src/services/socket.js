@@ -599,13 +599,15 @@ class SocketService {
        * Process chat messages and check for correct word guesses
        */
       socket.on("chat:message", ({ message }) => {
+        console.log("message", message);
         const roomId = socket.data.roomId;
         const playerId = socket.data.playerId;
         const room = this.getRoom(roomId);
 
         if (!room) return;
+        console.log("room", room);
 
-        const player = room.players.fin((p) => p.id === playerId);
+        const player = room.players.find((p) => p.id === playerId);
         if (!player) return;
 
         //Check if the message is a guess during active gameplay

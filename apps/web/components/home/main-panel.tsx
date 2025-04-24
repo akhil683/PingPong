@@ -13,7 +13,6 @@ export default function MainPanel() {
   const [roomId, setRoomId] = useState("");
   const [error, setError] = useState("");
   const [username, setUsername] = useState<string>("");
-  const [avatar, setAvatar] = useState<string>("");
   const [isCreateRoomModalOpen, setIsCreateRoomModalOpen] = useState(false);
   const [selectedAvatar, setSelectedAvatar] = useState(0);
 
@@ -40,12 +39,6 @@ export default function MainPanel() {
 
     // Store username in localStorage
     localStorage.setItem("username", username);
-    localStorage.setItem(
-      "avatar",
-      avatar
-        ? avatar
-        : "https://img.freepik.com/free-vector/blue-circle-with-white-user_78370-4707.jpg?t=st=1745418365~exp=1745421965~hmac=109baaab8888ce96a9b7695eb925211657251aa8fce2b804ac52ef0ba396ee3d&w=740",
-    );
 
     // Navigate to game room
     router.push(`/game/${roomId}`);
@@ -73,15 +66,6 @@ export default function MainPanel() {
               className="flex-1 placeholder:text-gray-500 text-gray-800 px-4 py-3 rounded-full border border-green-200 focus:outline-none focus:ring-2 focus:ring-green-300 bg-white/80 font-ghibli text-lg"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-            />
-          </div>
-          <div className="flex gap-2 mb-6">
-            <input
-              type="text"
-              placeholder="URL of your avatr"
-              className="flex-1 placeholder:text-gray-500 text-gray-800 px-4 py-3 rounded-full border border-green-200 focus:outline-none focus:ring-2 focus:ring-green-300 bg-white/80 font-ghibli text-lg"
-              value={avatar}
-              onChange={(e) => setAvatar(e.target.value)}
             />
           </div>
           <div className="flex gap-2 mb-6">

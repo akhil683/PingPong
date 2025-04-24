@@ -64,7 +64,7 @@ export const GameProvider: React.FC<GameProviderProps> = ({
 
     // Initialize socket
     const socketUrl =
-      process.env.NEXT_PUBLIC_SOCKET_URL || "http://localhost:3001";
+      process.env.NEXT_PUBLIC_SOCKET_URL || "http://localhost:5000";
     const socketInstance = io(socketUrl);
     setSocket(socketInstance);
 
@@ -360,6 +360,7 @@ export const GameProvider: React.FC<GameProviderProps> = ({
   // Send chat message
   const sendMessage = (message: string) => {
     if (socket && message.trim()) {
+      console.log("message", message);
       socket.emit("chat:message", { message });
     }
   };

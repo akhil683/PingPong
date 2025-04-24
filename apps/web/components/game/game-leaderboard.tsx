@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Player } from "../../constants/GameTools";
 import GhibliAvatar from "../ghibli-avatar";
+import PlayersList from "../players/player-list";
 
 interface PropType {
   currentRound: number;
@@ -34,29 +35,8 @@ export default function GameLeaderboard({
         </div>
       </div>
 
-      <div className="divide-y divide-green-50">
-        {players.map((player) => (
-          <div
-            key={player.id}
-            className={`flex items-center p-3 ${player.isDrawing ? "bg-green-50" : ""} ${player.isDrawing ? "animate-pulse-slow" : ""}`}
-          >
-            <div className="w-8 text-right font-bold text-green-700 mr-2 font-ghibli">
-              #{player.id}
-            </div>
-            <div className="relative w-10 h-10 flex-shrink-0">
-              <GhibliAvatar color={player.color} />
-            </div>
-            <div className="ml-2 flex-1 overflow-hidden">
-              <div className="font-bold truncate font-ghibli text-green-800">
-                {player.name}
-              </div>
-              <div className="text-sm text-green-600 font-ghibli">
-                {player.points} points
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
+      {/* Leaderboard */}
+      <PlayersList />
     </div>
   );
 }
