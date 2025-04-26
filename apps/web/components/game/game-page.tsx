@@ -6,9 +6,8 @@ import { Settings, ThumbsUp, ThumbsDown, Trash2 } from "lucide-react";
 
 import Logo from "../logo";
 import GameLeaderboard from "./game-leaderboard";
-import GameChat from "./game-chat";
 
-import { tools, Tool, players, colors } from "../../constants/GameTools";
+import { tools, Tool, colors } from "../../constants/GameTools";
 import ToolSelection from "../tools/tool-selection";
 import ColorSelection from "../tools/color-selection";
 import BrushSelection from "../tools/brush-selection";
@@ -16,12 +15,11 @@ import AnimatedBackground from "../animated-background";
 import ChooseWordModal from "./modals/choose-word";
 import RoundPointsModal from "./modals/round-points-modal";
 import ChatBox from "../Chat/chat-box";
+import { useGameContext } from "../../lib/context/game-context";
 
 export default function GamePage() {
+  const { room, isDrawer, currentWord } = useGameContext();
   // Game state
-  const [currentRound, setCurrentRound] = useState(3);
-  const [totalRounds, setTotalRounds] = useState(3);
-  const [currentWord, setCurrentWord] = useState("__________");
   const [isChooseWordModalOpen, setIsChooseWordModalOpen] = useState(false);
   const [isRoundPointsModalOpen, setIsRoundPointsModalOpen] = useState(false);
 
@@ -360,11 +358,7 @@ export default function GamePage() {
       {/* Main Game Area */}
       <div className="flex flex-1 px-4 pb-4 gap-4 relative z-10">
         {/* Left Sidebar - Player List */}
-        <GameLeaderboard
-          totalRounds={totalRounds}
-          currentRound={currentRound}
-          players={players}
-        />
+        <GameLeaderboard />
 
         {/* Main Game Content */}
         <div className="flex-1 flex flex-col">
