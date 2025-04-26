@@ -7,10 +7,10 @@ export default function RoomContent() {
 
   if (!connected || !room) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="flex items-center justify-center min-h-screen bg-white text-black">
         <div className="text-center">
-          <h2 className="text-xl font-semibold">Connecting to room...</h2>
-          <p className="text-gray-600 mt-2">Please wait</p>
+          <h2 className="text-4xl font-semibold">Connecting to room...</h2>
+          <p className="text-gray-600 text-xl mt-2">Please wait</p>
         </div>
       </div>
     );

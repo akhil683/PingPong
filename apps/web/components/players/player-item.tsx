@@ -1,6 +1,5 @@
 import React from "react";
 import { Player } from "../../type";
-import Image from "next/image";
 import GhibliAvatar from "../ghibli-avatar";
 
 interface PlayerItemProps {
