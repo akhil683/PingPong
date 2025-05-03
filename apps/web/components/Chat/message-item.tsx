@@ -30,7 +30,9 @@ const MessageItem: React.FC<MessageItemProps> = ({
           <span className="font-bold mr-1">{message.playerName}:</span>
         )}
       </div>
-      {!message.isSystem && <p className="text-gray-800">{message.message}</p>}
+      {!message.isSystem && (
+        <span className="text-gray-800">{message.message}</span>
+      )}
     </div>
   );
 };

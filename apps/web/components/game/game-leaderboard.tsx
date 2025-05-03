@@ -8,9 +8,8 @@ export default function GameLeaderboard() {
   return (
     <div className="max-md:hidden w-64 bg-white/80 backdrop-blur-sm rounded-3xl overflow-hidden shadow-xl border border-green-100 text-black p-3">
       {room?.gameState === "waiting" && !isHost && (
-        <p className="text-center">Waiting for host to join...</p>
+        <p className="text-center">Waiting for host to start...</p>
       )}{" "}
-      <div>{room?.gameState}</div>
       {room?.gameState === "roundEnd" && (
         <p className="text-center">Round ended! Preparing next round...</p>
       )}

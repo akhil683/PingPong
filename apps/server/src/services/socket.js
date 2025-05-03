@@ -1,11 +1,3 @@
-/**
- * Socket Service for PingPong
- *
- * This service handles all real-time communications for the drawing and guessing.
- * It manages rooms, players, game state, drawing data, and chat messages using Socket.IO
- * with Redis for pub/sub messaging.
- */
-
 const { Server } = require("socket.io");
 const Redis = require("ioredis");
 const RedisConfig = require("../config/redis.config");
