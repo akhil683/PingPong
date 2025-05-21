@@ -6,9 +6,8 @@ import { Settings, ThumbsUp, ThumbsDown, Trash2 } from "lucide-react";
 
 import Logo from "../logo";
 import GameLeaderboard from "./game-leaderboard";
-import GameChat from "./game-chat";
 
-import { tools, Tool, players, colors } from "../../constants/GameTools";
+import { tools, Tool, colors } from "../../constants/GameTools";
 import ToolSelection from "../tools/tool-selection";
 import ColorSelection from "../tools/color-selection";
 import BrushSelection from "../tools/brush-selection";
@@ -16,12 +15,12 @@ import AnimatedBackground from "../animated-background";
 import ChooseWordModal from "./modals/choose-word";
 import RoundPointsModal from "./modals/round-points-modal";
 import ChatBox from "../Chat/chat-box";
+import { useGameContext } from "../../lib/context/game-context";
+import GuessBox from "./game-guess-box";
 
 export default function GamePage() {
+  const { room, isDrawer, currentWord } = useGameContext();
   // Game state
-  const [currentRound, setCurrentRound] = useState(3);
-  const [totalRounds, setTotalRounds] = useState(3);
-  const [currentWord, setCurrentWord] = useState("__________");
   const [isChooseWordModalOpen, setIsChooseWordModalOpen] = useState(false);
   const [isRoundPointsModalOpen, setIsRoundPointsModalOpen] = useState(false);
 
@@ -360,23 +359,12 @@ export default function GamePage() {
       {/* Main Game Area */}
       <div className="flex flex-1 px-4 pb-4 gap-4 relative z-10">
         {/* Left Sidebar - Player List */}
-        <GameLeaderboard
-          totalRounds={totalRounds}
-          currentRound={currentRound}
-          players={players}
-        />
+        <GameLeaderboard />
 
         {/* Main Game Content */}
         <div className="flex-1 flex flex-col">
           {/* Word to Guess */}
-          <div className="bg-white/90 backdrop-blur-sm rounded-lg p-3 mb-2 flex flex-col items-center shadow-xl border border-white/20">
-            <div className="text-gray-700 font-bold mb-1 max-md:hidden">
-              GUESS THIS
-            </div>
-            <div className="text-2xl tracking-widest font-bold text-black">
-              {currentWord}
-            </div>
-          </div>
+          <GuessBox />
 
           {/* Game Area with Canvas and Chat */}
           <div className="flex-1 flex gap-2 max-md:flex-col">

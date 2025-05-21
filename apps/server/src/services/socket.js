@@ -1,11 +1,3 @@
-/**
- * Socket Service for PingPong
- *
- * This service handles all real-time communications for the drawing and guessing.
- * It manages rooms, players, game state, drawing data, and chat messages using Socket.IO
- * with Redis for pub/sub messaging.
- */
-
 const { Server } = require("socket.io");
 const Redis = require("ioredis");
 const RedisConfig = require("../config/redis.config");
@@ -146,7 +138,7 @@ class SocketService {
    */
   startGame(roomId) {
     const room = this.getRoom(roomId);
-
+    console.log("room length", room.players.length);
     // Require at least 2 players to start a game
     if (!room || room.players.length < 2) return false;
 
@@ -182,7 +174,8 @@ class SocketService {
     room.correctGuessers = []; // Reset correct guessers
 
     // Select a random word for this round
-    room.currentWord = generateWord(); // Random word from our utility function
+    room.currentWord = "hello";
+    // room.currentWord = generateWord(); // Random word from our utility function
 
     // Select the next player to be the drawer (cycle through all players)
     const currentDrawerIndex = room.players.findIndex(
@@ -468,7 +461,7 @@ class SocketService {
       });
 
       /**
-       * Room Leave Event
+o      * Room Leave Event
        * When a player manually leaves a game room
        */
       socket.on("room:leave", () => {
@@ -505,10 +498,11 @@ class SocketService {
       socket.on("game:start", () => {
         const roomId = socket.data.roomId;
         const playerId = socket.data.playerId;
-        const room = this.getRoom(roomId);
 
-        //Verify sender is the host
+        const room = this.getRoom(roomId);
+        console.log(roomId, playerId, room.hostId); //Verify sender is the host
         if (room && room.hostId === playerId) {
+          console.log("hello");
           this.startGame(roomId);
         }
       });

@@ -345,7 +345,9 @@ export const GameProvider: React.FC<GameProviderProps> = ({
 
   // Start game function (for host)
   const startGame = () => {
+    console.log("Start game");
     if (socket && room && player && room.hostId === player.id) {
+      console.log("Start game 1");
       socket.emit("game:start");
     }
   };

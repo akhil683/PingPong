@@ -22,18 +22,31 @@ const MessageItem: React.FC<MessageItemProps> = ({
   };
 
   return (
-    <div className={`flex-1 p-2 rounded font-ghibli ${getMessageClass()}`}>
-      <div className="flex items-center space-x-1">
-        {message.isSystem ? (
-          <p className="text-sm w-full px-1 rounded text-center">
-            {message.message}
+    <div className={`flex-1 p-2 rounded-full font-ghibli ${getMessageClass()}`}>
+      {message.isCorrectGuess && (
+        <div className="flex items-center space-x-1">
+          <p className="text-sm w-full px-1 text-center">
+            {message.playerName} {message.message}
           </p>
-        ) : (
-          <span className="font-bold mr-1">{message.playerName}:</span>
-        )}
-      </div>
-      {!message.isSystem && <p className="text-gray-800">{message.message}</p>}
+        </div>
+      )}
+
+      {message.isSystem && !message.isCorrectGuess && (
+        <div className="flex items-center space-x-1">
+          <p className="text-sm w-full px-1 text-center">{message.message}</p>
+        </div>
+      )}
+
+      {!message.isSystem && !message.isCorrectGuess && (
+        <>
+          <div className="flex items-center space-x-1">
+            <span className="font-bold mr-1">{message.playerName}:</span>
+          </div>
+          <span className="text-gray-800">{message.message}</span>
+        </>
+      )}
     </div>
   );
 };
+
 export default MessageItem;
