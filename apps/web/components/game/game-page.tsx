@@ -19,7 +19,7 @@ import { useGameContext } from "../../lib/context/game-context";
 import GuessBox from "./game-guess-box";
 
 export default function GamePage() {
-  const { room, isDrawer, currentWord } = useGameContext();
+  const { room, isDrawer, socket } = useGameContext();
   // Game state
   const [isChooseWordModalOpen, setIsChooseWordModalOpen] = useState(false);
   const [isRoundPointsModalOpen, setIsRoundPointsModalOpen] = useState(false);
@@ -117,6 +117,7 @@ export default function GamePage() {
 
     // Start drawing
     function startDraw(e: MouseEvent | TouchEvent) {
+      if (!isDrawer) return; // Only drawer can draw
       isDrawing = true;
 
       // Get coordinates
@@ -149,12 +150,22 @@ export default function GamePage() {
         // Draw a dot for single clicks
         ctx.lineTo(coords.x + 0.1, coords.y + 0.1);
         ctx.stroke();
+        if (socket && room && canvas) {
+          socket.emit("drawing:start", {
+            roomId: room.id,
+            startX: coords.x / canvas.width, // Send normalized coordinates
+            startY: coords.y / canvas.height,
+            tool: currentTool,
+            color: currentColor,
+            brushSize: brushSize,
+          });
+        }
       }
     }
 
     // Draw
     function draw(e: MouseEvent | TouchEvent) {
-      if (!isDrawing) return;
+      if (!isDrawing || !isDrawer) return;
 
       // Get coordinates
       const coords = getCoordinates(e);
@@ -168,8 +179,20 @@ export default function GamePage() {
 
         // Set drawing properties
         setDrawingProperties(ctx);
-
         ctx.stroke();
+        // Emit drawing event with normalized coordinates
+        if (socket && room && canvas) {
+          socket.emit("drawing:update", {
+            roomId: room.id,
+            startX: lastX / canvas.width,
+            startY: lastY / canvas.height,
+            endX: coords.x / canvas.width,
+            endY: coords.y / canvas.height,
+            tool: currentTool,
+            color: currentColor,
+            brushSize: brushSize,
+          });
+        }
       } else {
         // For shapes, restore original state and draw preview
         if (!ctx || !canvas || !tempCtx) return;
@@ -192,7 +215,27 @@ export default function GamePage() {
 
     // End drawing
     function endDraw() {
-      if (!isDrawing) return;
+      if (!isDrawing || !isDrawer) return;
+
+      // For shapes, emit the final shape data
+      if (
+        currentTool !== "pen" &&
+        currentTool !== "eraser" &&
+        socket &&
+        room &&
+        canvas
+      ) {
+        socket.emit("drawing:shape", {
+          roomId: room.id,
+          startX: startX / canvas.width,
+          startY: startY / canvas.height,
+          endX: lastX / canvas.width,
+          endY: lastY / canvas.height,
+          tool: currentTool,
+          color: currentColor,
+          brushSize: brushSize,
+        });
+      }
       isDrawing = false;
 
       // Save the canvas state
@@ -296,8 +339,6 @@ export default function GamePage() {
       saveCanvasState();
     };
 
-    // Important: When component mounts or tool/color/size changes, update tempCanvas
-    // This ensures we don't lose previous drawings when switching tools
     if (canvas && tempCtx) {
       tempCtx.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
       tempCtx.drawImage(canvas, 0, 0);
@@ -325,6 +366,123 @@ export default function GamePage() {
 
     window.addEventListener("resize", resizeCanvas);
 
+    // Handle drawing events from other players
+    if (socket && !isDrawer && canvas) {
+      // Listen for drawing updates
+      const handleDrawingUpdate = (data: {
+        roomId: string;
+        startX: number;
+        startY: number;
+        endX: number;
+        endY: number;
+        tool: string;
+        color: string;
+        brushSize: number;
+      }) => {
+        if (!ctx || !canvas) return;
+
+        // Convert normalized coordinates back to canvas size
+        const startX = data.startX * canvas.width;
+        const startY = data.startY * canvas.height;
+        const endX = data.endX * canvas.width;
+        const endY = data.endY * canvas.height;
+
+        ctx.beginPath();
+        ctx.moveTo(startX, startY);
+        ctx.lineTo(endX, endY);
+
+        // Set drawing properties
+        if (data.tool === "eraser") {
+          ctx.globalCompositeOperation = "destination-out";
+          ctx.strokeStyle = "rgba(255,255,255,1)";
+        } else {
+          ctx.globalCompositeOperation = "source-over";
+          ctx.strokeStyle = data.color;
+        }
+
+        ctx.lineWidth = data.brushSize;
+        ctx.lineCap = "round";
+        ctx.lineJoin = "round";
+        ctx.stroke();
+
+        // Update temp canvas
+        if (tempCtx) {
+          tempCtx.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
+          tempCtx.drawImage(canvas, 0, 0);
+        }
+      };
+
+      // Listen for shape drawing events
+      const handleShapeDrawing = (data: {
+        roomId: string;
+        startX: number;
+        startY: number;
+        endX: number;
+        endY: number;
+        tool: string;
+        color: string;
+        brushSize: number;
+      }) => {
+        if (!ctx || !canvas) return;
+
+        // Convert normalized coordinates back to canvas size
+        const startX = data.startX * canvas.width;
+        const startY = data.startY * canvas.height;
+        const endX = data.endX * canvas.width;
+        const endY = data.endY * canvas.height;
+
+        // Draw shape
+        ctx.beginPath();
+
+        if (data.tool === "eraser") {
+          ctx.globalCompositeOperation = "destination-out";
+          ctx.strokeStyle = "rgba(255,255,255,1)";
+        } else {
+          ctx.globalCompositeOperation = "source-over";
+          ctx.strokeStyle = data.color;
+        }
+
+        ctx.lineWidth = data.brushSize;
+        ctx.lineCap = "round";
+        ctx.lineJoin = "round";
+
+        drawShape(ctx, startX, startY, endX, endY);
+        ctx.stroke();
+
+        // Update temp canvas
+        if (tempCtx) {
+          tempCtx.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
+          tempCtx.drawImage(canvas, 0, 0);
+        }
+      };
+
+      // Listen for canvas clear events
+      const handleClearCanvas = () => {
+        if (!ctx || !canvas) return;
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Clear temp canvas too
+        if (tempCtx) {
+          tempCtx.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
+          tempCtx.fillStyle = "#ffffff";
+          tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+        }
+      };
+
+      // Set up socket listeners
+      socket.on("drawing:update", handleDrawingUpdate);
+      socket.on("drawing:shape", handleShapeDrawing);
+      socket.on("drawing:clear", handleClearCanvas);
+
+      // Add to cleanup function
+      return () => {
+        socket.off("drawing:update", handleDrawingUpdate);
+        socket.off("drawing:shape", handleShapeDrawing);
+        socket.off("drawing:clear", handleClearCanvas);
+      };
+    }
+
     // Cleanup
     return () => {
       canvas.removeEventListener("mousedown", startDraw);
@@ -340,7 +498,8 @@ export default function GamePage() {
 
       delete window.clearCanvas;
     };
-  }, [currentTool, currentColor, brushSize]);
+  }, [currentTool, currentColor, brushSize, isDrawer, room, socket]);
+
   // Clear canvas handler
   const clearCanvas = () => {
     if (window.clearCanvas) {

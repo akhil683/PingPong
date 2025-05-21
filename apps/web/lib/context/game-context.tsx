@@ -20,7 +20,19 @@ interface GameContextProps {
   startGame: () => void;
   updateSettings: (settings: GameSettings) => void;
   sendMessage: (message: string) => void;
+  sendDrawingData: (drawingData: DrawingData) => void;
   leaveRoom: () => void;
+  clearCanvas: () => void;
+}
+
+interface DrawingData {
+  x0: number;
+  y0: number;
+  x1: number;
+  x2: number;
+  color: string;
+  lineWidth: number;
+  tool?: string; // For eraser or other tool
 }
 
 const GameContext = createContext<GameContextProps | null>(null);
@@ -320,6 +332,24 @@ export const GameProvider: React.FC<GameProviderProps> = ({
       setMessages((prev) => [...prev, message]);
     });
 
+    // Drawing event handlers
+    socketInstance.on(
+      "drawing:update",
+      (data: { drawingData: DrawingData }) => {
+        // This event will be handled by your Canvas component
+        // We're just making sure to receive and forward it
+        const drawEvent = new CustomEvent("canvas:draw", {
+          detail: data.drawingData,
+        });
+        window.dispatchEvent(drawEvent);
+      },
+    );
+
+    socketInstance.on("drawing:clear", () => {
+      // This event will be handled by your Canvas component
+      const clearEvent = new CustomEvent("canvas:clear");
+      window.dispatchEvent(clearEvent);
+    });
     // Cleanup function
     return () => {
       if (socketInstance) {
@@ -349,6 +379,23 @@ export const GameProvider: React.FC<GameProviderProps> = ({
     if (socket && room && player && room.hostId === player.id) {
       console.log("Start game 1");
       socket.emit("game:start");
+    }
+  };
+
+  // Send drawing data
+  const sendDrawingData = (drawingData: DrawingData) => {
+    if (socket && isDrawer) {
+      socket.emit("drawing:update", {
+        roomId: roomId,
+        drawingData: drawingData,
+      });
+    }
+  };
+
+  // Clear canvas
+  const clearCanvas = () => {
+    if (socket && isDrawer) {
+      socket.emit("drawing:clear", { roomId });
     }
   };
 
@@ -389,6 +436,8 @@ export const GameProvider: React.FC<GameProviderProps> = ({
         updateSettings,
         sendMessage,
         leaveRoom,
+        sendDrawingData,
+        clearCanvas,
       }}
     >
       {children}
