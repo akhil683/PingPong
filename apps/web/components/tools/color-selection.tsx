@@ -1,3 +1,4 @@
+import React from "react";
 import { Dispatch, SetStateAction } from "react";
 import { Tool } from "../../constants/GameTools";
 
@@ -9,13 +10,13 @@ interface PropType {
   currentColor: string;
 }
 
-export default function ColorSelection({
+const ColorSelection = ({
   colors,
   currentTool,
   setCurrentTool,
   setCurrentColor,
   currentColor,
-}: PropType) {
+}: PropType) => {
   return (
     <div className="flex flex-wrap gap-1 mr-2">
       {colors.map((color) => (
@@ -38,4 +39,6 @@ export default function ColorSelection({
       ))}
     </div>
   );
-}
+};
+
+export default React.memo(ColorSelection);

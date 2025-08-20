@@ -1,7 +1,8 @@
+import React from "react";
 import PlayersList from "../players/player-list";
 import { useGameContext } from "../../lib/context/game-context";
 
-export default function GameLeaderboard() {
+const GameLeaderboard = () => {
   const { room, player, startGame } = useGameContext();
   const isHost = room?.hostId === player?.id;
 
@@ -38,4 +39,6 @@ export default function GameLeaderboard() {
       <PlayersList />
     </div>
   );
-}
+};
+
+export default React.memo(GameLeaderboard);

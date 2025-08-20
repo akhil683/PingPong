@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction } from "react";
+import React, { Dispatch, SetStateAction } from "react";
 import { Tool } from "../../constants/GameTools";
 
 interface PropType {
@@ -11,11 +11,7 @@ interface PropType {
   currentTool: Tool;
 }
 
-export default function ToolSelection({
-  tools,
-  setCurrentTool,
-  currentTool,
-}: PropType) {
+const ToolSelection = ({ tools, setCurrentTool, currentTool }: PropType) => {
   return (
     <div className="flex gap-1 mr-3">
       {tools.map((tool) => (
@@ -31,4 +27,6 @@ export default function ToolSelection({
       ))}
     </div>
   );
-}
+};
+
+export default React.memo(ToolSelection);

@@ -36,6 +36,8 @@ export default function GamePage() {
   useEffect(() => {
     // Get canvas element and context
     const canvas = canvasRef.current;
+    //TODO: Socket connection of canvas drawing
+    console.log("canvas ref", canvasRef);
     if (!canvas) return;
 
     const ctx = canvas.getContext("2d");
@@ -543,7 +545,7 @@ export default function GamePage() {
               <div className="w-full h-full relative">
                 <canvas
                   ref={canvasRef}
-                  className="absolute top-0 left-0 h-full touch-none"
+                  className="absolute top-0 left-0 h-full w-full touch-none"
                   style={{ cursor: "crosshair" }}
                 />
               </div>
@@ -587,7 +589,6 @@ export default function GamePage() {
             </div>
 
             {/* Chat Container */}
-            {/* <GameChat /> */}
             <ChatBox />
           </div>
         </div>

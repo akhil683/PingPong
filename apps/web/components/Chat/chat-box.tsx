@@ -15,10 +15,6 @@ const ChatBox: React.FC = () => {
   console.log("messages", messages);
   return (
     <div className="h-64 md:h-full md:w-64 bg-white/80 backdrop-blur-sm rounded-3xl overflow-hidden shadow-xl border border-pink-100 flex flex-col">
-      {/* <div className="bg-blue-600 text-white p-2"> */}
-      {/*   <h3 className="font-bold">Chat</h3> */}
-      {/* </div> */}
-
       <MessageList messages={messages} currentPlayerId={currentPlayerId} />
 
       <MessageInput
@@ -30,4 +26,4 @@ const ChatBox: React.FC = () => {
   );
 };
 
-export default ChatBox;
+export default React.memo(ChatBox);

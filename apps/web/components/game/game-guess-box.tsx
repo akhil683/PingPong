@@ -1,11 +1,12 @@
+import React from "react";
 import { useGameContext } from "../../lib/context/game-context";
 
-export default function GuessBox() {
+const GuessBox = () => {
   const { room, isDrawer, currentWord } = useGameContext();
 
   if (!room) return null;
 
-  const { gameState, currentRound, totalRounds } = room;
+  const { gameState } = room;
 
   const maskedWord = () => {
     if (!currentWord) return "";
@@ -36,4 +37,6 @@ export default function GuessBox() {
       {gameState === "gameEnd" && <p>Game over! Check the final scores.</p>}
     </div>
   );
-}
+};
+
+export default React.memo(GuessBox);

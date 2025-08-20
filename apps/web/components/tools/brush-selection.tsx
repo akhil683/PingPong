@@ -1,3 +1,4 @@
+import React from "react";
 import { Dispatch, SetStateAction } from "react";
 import { Tool } from "../../constants/GameTools";
 
@@ -9,13 +10,13 @@ interface PropType {
   currentColor: string;
 }
 
-export default function BrushSelection({
+const BrushSelection = ({
   brushSizes,
   brushSize,
   setBrushSize,
   currentTool,
   currentColor,
-}: PropType) {
+}: PropType) => {
   return (
     <div className="flex gap-1 mr-2">
       {brushSizes.map((size) => (
@@ -38,4 +39,6 @@ export default function BrushSelection({
       ))}
     </div>
   );
-}
+};
+
+export default React.memo(BrushSelection);
